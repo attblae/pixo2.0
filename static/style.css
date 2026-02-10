@@ -9,6 +9,8 @@
   background-color: #0c033f;
 }
 
+
+/* header: */
 .header {
   position: relative;
   min-height: 50px;
@@ -38,6 +40,8 @@
   /* background-color: blueviolet; */
 }
 
+
+/* for catalog: */
 .products {
   display: flex;
   flex-wrap: wrap;
@@ -80,8 +84,42 @@
   align-items: center;
   flex-direction: column;
   color: #000;
-  /* font-size: 25px; */
   /* background-color: green; */
+}
+
+
+/* for account: */
+.header-account {
+  position: relative;
+  min-height: 50px;
+  padding: 0px 20px 0px 20px;
+  display: flex;
+  /* background-color: yellow; */
+}
+
+.body-account {
+  /* position: relative; */
+  margin-left: 15%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;
+  align-items: center;
+  min-height: 500px;
+  max-width: 70%;
+  /* background-color: beige; */
+}
+
+.posts {
+  position: relative;
+	border: 1px solid #ffffff;
+	border-radius: 3px;
+	background: #fff;
+	margin: 0 30px 30px 0;
+	text-decoration: none;
+	min-width: 20%;
+  max-width: 20%;
+  height: 300px;
+  overflow: hidden;
 }
 
 .footer {
