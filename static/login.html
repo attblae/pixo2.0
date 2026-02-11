@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>PIXO</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body class="background">
     <div class="header">
@@ -18,7 +18,7 @@
         <div class="input">
             <input type="text" placeholder="Username" id="username">
             <input type="password" placeholder="Password" id="password">
-            <button>Login</button>
+            <button onclick="check_user()">Login</button>
         </div>
     <p style="display: flex; align-items: center; justify-content: center;">Don't have account?<a href="/create">Create account</a></p>
     </div>
@@ -27,5 +27,27 @@
         <p>89999999999</p>
         <p>some information</p>
     </div>
+    <script>
+        async function check_user() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const response = await fetch("/login_account", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        username: username,
+                        password: password
+                    })
+                });
+            if (response.ok) {
+                window.location.href = "/";
+            } else {
+                const data = await response.json();
+                alert(data.message);
+            };
+        }
+
+        
+    </script>
 </body>
 </html>

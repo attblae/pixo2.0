@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>PIXO</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body class="background">
     <div class="header">
@@ -24,7 +24,7 @@
             <input type="text" placeholder="Email" id="email">
             <input type="text" placeholder="Pasport number" id="pasport">
             <input type="text" placeholder="Card" id="card">
-            <button>Create account</button>
+            <button onblur="create_user()">Create account</button>
         </div>
     <p style="display: flex; align-items: center; justify-content: center;">Account had created?<a href="/login">Log in</a></p>
     </div>
@@ -33,5 +33,38 @@
         <p>89999999999</p>
         <p>some information</p>
     </div>
+    <script>
+        async function create_user() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const name = document.getElementById("name").value;
+            const surname = document.getElementById("surname").value;
+            const patronymic = document.getElementById("patronymic").value;
+            const email = document.getElementById("email").value;
+            const pasport = document.getElementById("pasport").value;
+            const card = document.getElementById("card").value;
+
+            const response = await fetch("/create_user", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        username: username,
+                        password: password,
+                        name: name,
+                        surname: surname,
+                        patronymic: patronymic,
+                        email: email,
+                        pasport: pasport,
+                        card: card
+                    })
+                });
+            if (response.ok) {
+                window.location.href = "/";
+            } else {
+                const data = await response.json();
+                alert(data.message)
+            }
+        }
+    </script>
 </body>
 </html>
