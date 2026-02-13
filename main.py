@@ -14,11 +14,13 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 class Creating_user(BaseModel):
     username: str
     password: str
+    password_confirm: str
     name: str
     surname: str
     patronymic: str
-    pasport: str
+    phone: str
     email: str
+    pasport: str
     card: str
 
 class Login(BaseModel):
@@ -85,15 +87,34 @@ def login_account(data: Login):
 
 @app.post("/create_user")
 def creating_user(data: Creating_user):
-    username = cursor.execute("SELECT username FROM users WHERE username = ?", data.username)
+    # data_information = data.model_dump()
+    # if any(" " in data_info for data_info in data_information.values()):
+    #     raise HTTPException(status_code=400, detail="Information contains blank space")
+    
+    con = sqlite3.connect("base/tables.sql")
+    cursor = con.cursor()
+    # username = cursor.execute("SELECT username FROM users WHERE username = ?", (data.username,)).fetchone()
 
-    if username:
-        raise HTTPException(detail="username is already used", status_code=404)
+    # if username:
+    #     raise HTTPException(detail="username is already used", status_code=404)
+    
+    if data.password_confirm != data.password:
+        raise HTTPException(detail="password does not confirmed", status_code=404)
     
     cursor.execute(
             """
-                INSERT users (username, password, name, surname, patronymic, email, pasport, card)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO users (
+                username, 
+                password, 
+                name, 
+                surname, 
+                patronymic,
+                phone, 
+                email, 
+                pasport,
+                card
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
             (
                 data.username,
@@ -101,40 +122,42 @@ def creating_user(data: Creating_user):
                 data.name,
                 data.surname,
                 data.patronymic,
+                data.phone,
                 data.email,
                 data.pasport,
                 data.card
         )
     )
+    con.commit()
+    con.close()
+    return {"status": "ok"}
 
-
-# sql part:
-con = sqlite3.connect("tables.sql")
-cursor = con.cursor()
-
-def create_tables():
+# sql part
+def create_tables(cursor):
     cursor.execute(
+            """
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username VARCHAR(30) UNIQUE,
+                    password VARCHAR(255),
+                    name VARCHAR(35),
+                    surname VARCHAR(35),
+                    patronymic VARCHAR(35),
+                    phone VARCHAR(11) UNIQUE,
+                    email VARCHAR(50) UNIQUE,
+                    pasport VARCHAR(16) UNIQUE,
+                    card VARCHAR(19) UNIQUE
+                )
         """
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username VARCHAR(30) UNIQUE,
-                password VARCHAR(255),
-                name VARCHAR(35),
-                surname VARCHAR(35),
-                patronymic VARCHAR(35),
-                phone VARCHAR(11) UNIQUE,
-                email VARCHAR(50) UNIQUE,
-                passport_number VARCHAR(16) UNIQUE,
-                card VARCHAR(19) UNIQUE
-            )
-    """
     )
 
 
 if __name__ == "__main__":
     # 127.0.0.1
     # 0.0.0.0
-    create_tables()
+    con = sqlite3.connect("base/tables.sql")
+    cursor = con.cursor()
+    create_tables(cursor)
     con.commit()
     con.close()
     uvicorn.run(
