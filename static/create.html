@@ -26,7 +26,7 @@
             <input type="text" placeholder="Email" id="email">
             <input type="text" placeholder="Pasport number" id="pasport">
             <input type="text" placeholder="Card" id="card">
-            <button onblur="create_user()">Create account</button>
+            <button onclick="create_user()">Create account</button>
         </div>
     <p style="display: flex; align-items: center; justify-content: center;">Account had created?<a href="/login">Log in</a></p>
     </div>
@@ -65,7 +65,7 @@
                     })
                 });
             if (response.ok) {
-                window.location.href = "/";
+                window.location.href = "/login";
             } else {
                 const data = await response.json();
                 alert(data.message)
