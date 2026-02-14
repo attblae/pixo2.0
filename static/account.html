@@ -68,21 +68,20 @@
         <p>some information</p>
     </div>
     <script>
-            document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("DOMContentLoaded", async function () {
             const token = localStorage.getItem("token");
 
             if (!token) {
                 window.location.href = "/login";
             } else {
-                const response = fetch("/check_token", {
+                const response = await fetch("/check_token", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ 
-                        token: token
+                        access_token: token
                     })
                 });
-                const data = response.json()
-                if (data < now ) {
+                if (!response.ok) {
                     localStorage.removeItem("token");
                     window.location.href = "/login";
                 }

@@ -2,11 +2,12 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from passlib.context import CryptContext
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from pydantic import BaseModel
 import sqlite3
 import uvicorn
+import time
  
 app = FastAPI()
 
@@ -58,7 +59,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     )
 
 def create_access_token(subject: str, expires_delta = None) -> str:
-    expire = time.time() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    expire = time.time() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)).total_seconds()
     to_encode = {"sub": subject, "exp": expire}
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -114,7 +115,7 @@ def login_account(data: Login):
     con.close()
     token = create_access_token(data.username)
 
-    response = Token(token)
+    response = Token(access_token=token)
     return response
     
 
@@ -170,11 +171,14 @@ def creating_user(data: Creating_user):
     return {"status": "ok"}
 
 @app.post("/check_token")
-def check_for_token(token):
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+def check_token(data: Token):
+    payload = jwt.decode(data.access_token, SECRET_KEY, algorithms=[ALGORITHM])
     expires_at = payload["exp"]
 
-    return(expires_at)
+    if time.time() > expires_at:
+        raise HTTPException(detail="Token expired", status_code=404)
+    
+    return {"status": "ok"}
 
 # sql part
 def create_tables(cursor):
