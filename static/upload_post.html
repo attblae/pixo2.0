@@ -17,6 +17,7 @@
     <div class="content">
         <div class="input">
             <input type="text" placeholder="Link" id="link">
+            <input type="text" placeholder="Price" id="price">
             <button style="margin-bottom: 5%" onclick="upload()">Upload</button>
         </div>
         <div class="body-account">
@@ -36,9 +37,8 @@
         <p>some information</p>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", async function () {
         const token = localStorage.getItem("token");
-
+        document.addEventListener("DOMContentLoaded", async function () {
         if (!token) {
             window.location.href = "/login";
         } else {
@@ -56,12 +56,21 @@
         }
         });
 
+        const link = document.getElementById("link").value
+        const price = document.getElementById("price").value
+
         async function upload() {
             const response = await fetch("/uploading", {
                 method: "POST",
-                headers: {},
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    link: link,
+                    price: price
                 })
         }
+
+        const data = await response.json();
+        alert(data.message);
 
     </script>
 </body>

@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
+from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
 from datetime import timedelta
 from jose import JWTError, jwt
@@ -14,6 +15,8 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+
+templates = Jinja2Templates(directory="static")
 
 SECRET_KEY = "change-me-in-production-please"
 ALGORITHM = "HS256"
@@ -36,6 +39,10 @@ class CreatingUser(Login):
 
 class Token(BaseModel):
     access_token: str
+
+class PostsInfo(BaseModel):
+    link: str
+    price: str
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
@@ -71,7 +78,7 @@ def main_page():
 def create_page():
     return FileResponse("static/create.html")
 
-@app.get("/login/")
+@app.get("/login")
 def login_page():
     return FileResponse("static/login.html")
 
@@ -79,9 +86,9 @@ def login_page():
 def account_page():
     return FileResponse("static/account.html")
 
-@app.get("/posts")
+@app.get("/post")
 def posts_upload():
-    return FileResponse("static/posts.html")
+    return FileResponse("static/upload_post.html")
 
 @app.get("/backet")
 def backet_page():
@@ -183,9 +190,18 @@ def check_token(data: Token):
     
     return {"status": "ok"}, username
 
-@app.post("/uploading")
-def upload(data: Link):
-
+@app.post("/uploading",  response_class=HTMLResponse)
+def upload(data: PostsInfo, request: Request):
+    context = {
+        "request": request,
+        "arts": [
+            {
+                "price": data.price,
+                "photo_url": data.link
+            }
+        ]
+    }
+    return templates.TemplateResponse("catalog.html", context)
 
 # sql part
 def create_tables(cursor):
@@ -204,7 +220,12 @@ def create_tables(cursor):
                     card VARCHAR(19) UNIQUE
                 );
                 
-                
+                CREATE TABLE IF NOT EXISTS posts (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER,
+                    price DECIMAL(11, 2) not NULL,
+                    FOREIGN KEY (user_id) REFERENCES users (id)
+                )
         """
     )
 
