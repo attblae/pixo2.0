@@ -98,12 +98,8 @@
 }
 
 .body-account {
-  /* position: relative; */
+  position: relative;
   margin-left: 15%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: left;
-  align-items: center;
   min-height: 500px;
   max-width: 70%;
   /* background-color: beige; */

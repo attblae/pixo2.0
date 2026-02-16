@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from passlib.context import CryptContext
-from datetime import datetime, timedelta
+from datetime import timedelta
 from jose import JWTError, jwt
 from pydantic import BaseModel
 import sqlite3
@@ -18,11 +18,13 @@ pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 SECRET_KEY = "change-me-in-production-please"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-# classes:
 
-class Creating_user(BaseModel):
+class Login(BaseModel):
     username: str
     password: str
+
+# classes:
+class CreatingUser(Login):
     password_confirm: str
     name: str
     surname: str
@@ -31,10 +33,6 @@ class Creating_user(BaseModel):
     email: str
     pasport: str
     card: str
-
-class Login(BaseModel):
-    username: str
-    password: str
 
 class Token(BaseModel):
     access_token: str
@@ -73,13 +71,17 @@ def main_page():
 def create_page():
     return FileResponse("static/create.html")
 
-@app.get("/login")
+@app.get("/login/")
 def login_page():
     return FileResponse("static/login.html")
 
 @app.get("/account")
 def account_page():
     return FileResponse("static/account.html")
+
+@app.get("/posts")
+def posts_upload():
+    return FileResponse("static/posts.html")
 
 @app.get("/backet")
 def backet_page():
@@ -107,7 +109,7 @@ def login_account(data: Login):
     hash_pass = cursor.execute("SELECT password FROM users WHERE username = ?", (data.username,)).fetchone()
 
     if not hash_pass:
-        raise HTTPException(detail="User does not exists")
+        raise HTTPException(detail="User does not exists", status_code=404)
 
     if not verify_password(data.password, hash_pass[0]):
         raise HTTPException(detail="Invalid password", status_code=404)
@@ -120,7 +122,7 @@ def login_account(data: Login):
     
 
 @app.post("/create_user")
-def creating_user(data: Creating_user):
+def creating_user(data: CreatingUser):
     data_information = data.model_dump()
     if any(" " in data_info for data_info in data_information.values()):
         raise HTTPException(status_code=400, detail="Information contains blank space")
@@ -174,11 +176,16 @@ def creating_user(data: Creating_user):
 def check_token(data: Token):
     payload = jwt.decode(data.access_token, SECRET_KEY, algorithms=[ALGORITHM])
     expires_at = payload["exp"]
+    username = payload["sub"]
 
-    if time.time() > expires_at:
+    if time.time() >= expires_at:
         raise HTTPException(detail="Token expired", status_code=404)
     
-    return {"status": "ok"}
+    return {"status": "ok"}, username
+
+@app.post("/uploading")
+def upload(data: Link):
+
 
 # sql part
 def create_tables(cursor):
@@ -195,7 +202,9 @@ def create_tables(cursor):
                     email VARCHAR(50) UNIQUE,
                     pasport VARCHAR(16) UNIQUE,
                     card VARCHAR(19) UNIQUE
-                )
+                );
+                
+                
         """
     )
 
