@@ -94,9 +94,31 @@ def posts_upload():
 def backet_page():
     return FileResponse("static/backet.html")
 
-@app.get("/catalog")
-def catalog_page():
-    return FileResponse("static/catalog.html")
+@app.get("/catalog", response_class=HTMLResponse)
+async def catalog_page(request: Request):
+    con = sqlite3.connect("base/tables.sql")
+    cursor = con.cursor()
+
+    post = cursor.execute(
+        "SELECT * FROM posts"
+    ).fetchall()
+
+    context = {
+        "request": request,
+        "arts": [
+        ]
+    }
+
+    for i in range(3):
+        context["arts"].append(
+            {
+                "price": post[i][2],
+                "photo_url": post[i][4]
+            }
+        )
+
+    return templates.TemplateResponse("catalog.html", context)
+    # return FileResponse("static/catalog.html")
 
 @app.get("/support")
 def support_page():
@@ -130,15 +152,14 @@ def login_account(data: Login):
 
 @app.post("/create_user")
 def creating_user(data: CreatingUser):
+    con = sqlite3.connect("base/tables.sql")
+    cursor = con.cursor()
     data_information = data.model_dump()
     if any(" " in data_info for data_info in data_information.values()):
         raise HTTPException(status_code=400, detail="Information contains blank space")
     
     if data.phone.startswith("+7"):
         data.phone = '8' + data.phone.removeprefix('+7')
-
-    con = sqlite3.connect("base/tables.sql")
-    cursor = con.cursor()
 
     username = cursor.execute("SELECT username FROM users WHERE username = ?", (data.username,)).fetchone()
 
@@ -190,21 +211,30 @@ def check_token(data: Token):
     
     return {"status": "ok"}, username
 
-@app.post("/uploading",  response_class=HTMLResponse)
-def upload(data: PostsInfo, request: Request):
-    context = {
-        "request": request,
-        "arts": [
-            {
-                "price": data.price,
-                "photo_url": data.link
-            }
-        ]
-    }
-    return templates.TemplateResponse("catalog.html", context)
+# @app.post("/uploading",  response_class=HTMLResponse)
+# def upload(data: PostsInfo, request: Request):
+#     con = sqlite3.connect("base/tables.sql")
+#     cursor = con.cursor()
+#
+#     post = cursor.execute(
+#         "SELECT * FROM posts"
+#     ).fetchall()
+#
+#     context = {
+#         "request": request,
+#         "arts": [
+#             {
+#                 "price": post[2],
+#                 "photo_url": post[4]
+#             }
+#         ]
+#     }
+#     return templates.TemplateResponse("catalog.html", context)
 
 # sql part
-def create_tables(cursor):
+def create_tables():
+    con = sqlite3.connect("base/tables.sql")
+    cursor = con.cursor()
     cursor.execute(
             """
                 CREATE TABLE IF NOT EXISTS users (
@@ -219,13 +249,18 @@ def create_tables(cursor):
                     pasport VARCHAR(16) UNIQUE,
                     card VARCHAR(19) UNIQUE
                 );
-                
-                CREATE TABLE IF NOT EXISTS posts (
+        """
+    )
+    cursor.execute(
+        """
+            CREATE TABLE IF NOT EXISTS posts (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
                     price DECIMAL(11, 2) not NULL,
+                    description VARCHAR(256) NULL,
+                    photo_url VARCHAR(40) not NULL UNIQUE,
                     FOREIGN KEY (user_id) REFERENCES users (id)
-                )
+                );
         """
     )
 
@@ -233,11 +268,7 @@ def create_tables(cursor):
 if __name__ == "__main__":
     # 127.0.0.1
     # 0.0.0.0
-    con = sqlite3.connect("base/tables.sql")
-    cursor = con.cursor()
-    create_tables(cursor)
-    con.commit()
-    con.close()
+    create_tables()
     uvicorn.run(
         "main:app",
         host="127.0.0.1",
