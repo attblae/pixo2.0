@@ -19,7 +19,7 @@
 
 .background-picture {
     position: absolute;
-    display: flex;
+    /*display: flex;*/
     margin-left: 50%;
     height: 110%;
     z-index: 2;
