@@ -9,7 +9,7 @@ from pydantic import BaseModel
 import sqlite3
 import uvicorn
 import time
- 
+
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -22,9 +22,11 @@ SECRET_KEY = "change-me-in-production-please"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+
 class Login(BaseModel):
     username: str
     password: str
+
 
 # classes:
 class CreatingUser(Login):
@@ -37,12 +39,15 @@ class CreatingUser(Login):
     pasport: str
     card: str
 
+
 class Token(BaseModel):
     access_token: str
+
 
 class PostsInfo(BaseModel):
     link: str
     price: str
+
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
@@ -50,6 +55,7 @@ def hash_password(password: str) -> str:
 
 def verify_password(password: str, hashed: str) -> bool:
     return pwd_context.verify(password, hashed)
+
 
 # errors:
 
@@ -63,10 +69,12 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         }
     )
 
-def create_access_token(subject: str, expires_delta = None) -> str:
+
+def create_access_token(subject: str, expires_delta=None) -> str:
     expire = time.time() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)).total_seconds()
     to_encode = {"sub": subject, "exp": expire}
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
 
 # pages:
 
@@ -74,37 +82,68 @@ def create_access_token(subject: str, expires_delta = None) -> str:
 def main_page():
     return FileResponse("static/main.html")
 
+
 @app.get("/create")
 def create_page():
     return FileResponse("static/create.html")
+
 
 @app.get("/login")
 def login_page():
     return FileResponse("static/login.html")
 
+
 @app.get("/account")
 def account_page():
     return FileResponse("static/account.html")
+
 
 @app.get("/post")
 def posts_upload():
     return FileResponse("static/upload_post.html")
 
+
 @app.get("/backet")
 def backet_page():
     return FileResponse("static/backet.html")
 
-@app.get("/catalog")
-def catalog_page():
-    return FileResponse("static/catalog.html")
+
+@app.get("/catalog", response_class=HTMLResponse)
+async def catalog_page(request: Request):
+    con = sqlite3.connect("base/tables.sql")
+    cursor = con.cursor()
+
+    post = cursor.execute(
+        "SELECT * FROM posts"
+    ).fetchall()
+
+    context = {
+        "request": request,
+        "arts": [
+        ]
+    }
+
+    for i in range(3):
+        context["arts"].append(
+            {
+                "price": post[i][2],
+                "photo_url": post[i][4]
+            }
+        )
+
+    return templates.TemplateResponse("catalog.html", context)
+    # return FileResponse("static/catalog.html")
+
 
 @app.get("/support")
 def support_page():
     return FileResponse("static/support.html")
 
+
 @app.get("/about_us")
 def about_us_page():
     return FileResponse("static/about_us.html")
+
 
 # posts:
 
@@ -126,58 +165,58 @@ def login_account(data: Login):
 
     response = Token(access_token=token)
     return response
-    
+
 
 @app.post("/create_user")
 def creating_user(data: CreatingUser):
+    con = sqlite3.connect("base/tables.sql")
+    cursor = con.cursor()
     data_information = data.model_dump()
     if any(" " in data_info for data_info in data_information.values()):
         raise HTTPException(status_code=400, detail="Information contains blank space")
-    
+
     if data.phone.startswith("+7"):
         data.phone = '8' + data.phone.removeprefix('+7')
-
-    con = sqlite3.connect("base/tables.sql")
-    cursor = con.cursor()
 
     username = cursor.execute("SELECT username FROM users WHERE username = ?", (data.username,)).fetchone()
 
     if username:
         raise HTTPException(detail="username is already used", status_code=404)
-    
+
     if data.password_confirm != data.password:
         raise HTTPException(detail="password does not confirmed", status_code=404)
-    
+
     cursor.execute(
-            """
-                INSERT INTO users (
-                username, 
-                password, 
-                name, 
-                surname, 
-                patronymic,
-                phone, 
-                email, 
-                pasport,
-                card
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-            (
-                data.username,
-                hash_password(data.password),
-                data.name,
-                data.surname,
-                data.patronymic,
-                data.phone,
-                data.email,
-                data.pasport,
-                data.card
+        """
+            INSERT INTO users (
+            username, 
+            password, 
+            name, 
+            surname, 
+            patronymic,
+            phone, 
+            email, 
+            pasport,
+            card
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """,
+        (
+            data.username,
+            hash_password(data.password),
+            data.name,
+            data.surname,
+            data.patronymic,
+            data.phone,
+            data.email,
+            data.pasport,
+            data.card
         )
     )
     con.commit()
     con.close()
     return {"status": "ok"}
+
 
 @app.post("/check_token")
 def check_token(data: Token):
@@ -187,45 +226,40 @@ def check_token(data: Token):
 
     if time.time() >= expires_at:
         raise HTTPException(detail="Token expired", status_code=404)
-    
+
     return {"status": "ok"}, username
 
-@app.post("/uploading",  response_class=HTMLResponse)
-def upload(data: PostsInfo, request: Request):
-    context = {
-        "request": request,
-        "arts": [
-            {
-                "price": data.price,
-                "photo_url": data.link
-            }
-        ]
-    }
-    return templates.TemplateResponse("catalog.html", context)
 
 # sql part
-def create_tables(cursor):
+def create_tables():
+    con = sqlite3.connect("base/tables.sql")
+    cursor = con.cursor()
     cursor.execute(
-            """
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username VARCHAR(30) UNIQUE,
-                    password VARCHAR(255),
-                    name VARCHAR(35),
-                    surname VARCHAR(35),
-                    patronymic VARCHAR(35),
-                    phone VARCHAR(11) UNIQUE,
-                    email VARCHAR(50) UNIQUE,
-                    pasport VARCHAR(16) UNIQUE,
-                    card VARCHAR(19) UNIQUE
-                );
-                
-                CREATE TABLE IF NOT EXISTS posts (
+        """
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username VARCHAR(30) UNIQUE,
+                password VARCHAR(255),
+                name VARCHAR(35),
+                surname VARCHAR(35),
+                patronymic VARCHAR(35),
+                phone VARCHAR(11) UNIQUE,
+                email VARCHAR(50) UNIQUE,
+                pasport VARCHAR(16) UNIQUE,
+                card VARCHAR(19) UNIQUE
+            );
+    """
+    )
+    cursor.execute(
+        """
+            CREATE TABLE IF NOT EXISTS posts (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
                     price DECIMAL(11, 2) not NULL,
+                    description VARCHAR(256) NULL,
+                    photo_url VARCHAR(40) not NULL UNIQUE,
                     FOREIGN KEY (user_id) REFERENCES users (id)
-                )
+                );
         """
     )
 
@@ -233,11 +267,7 @@ def create_tables(cursor):
 if __name__ == "__main__":
     # 127.0.0.1
     # 0.0.0.0
-    con = sqlite3.connect("base/tables.sql")
-    cursor = con.cursor()
-    create_tables(cursor)
-    con.commit()
-    con.close()
+    create_tables()
     uvicorn.run(
         "main:app",
         host="127.0.0.1",
