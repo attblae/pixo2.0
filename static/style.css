@@ -3,7 +3,14 @@
   margin: 0px;
 }
 
-.background {
+.background-blue {
+  position: relative;
+  min-height: 100vh;
+  overflow:hidden;
+  background-color: #4f649b;
+}
+
+.background-white {
   position: relative;
   min-height: 100vh;
   overflow:hidden;
@@ -48,7 +55,7 @@
   transform: translate(20%, 20%);
   display: flex;
   flex-direction: column;
-  gap: 100px;
+  gap: 30px;
   z-index: 3;
   /* background-color: red;*/
 }
@@ -158,7 +165,7 @@ a {
   color: white;
   /* font-family: PoppinsRegular; */
   text-decoration: none;
-  /* font-size: 20px; */
+  font-size: 20px;
   transition-duration: 0.4s;
 }
 
@@ -175,8 +182,18 @@ button {
   border: 0;
   border-radius: 5px;
   background: white;
-  height: 60px;
-  width: 15%;
   color: #4f649b;
   font-size: 16px;
+}
+
+h1 {
+    font-size: 250px;
+}
+
+h2 {
+    font-size: 70px;
+}
+
+p {
+    font-size: 20px;
 }
