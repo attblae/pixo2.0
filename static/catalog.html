@@ -5,7 +5,7 @@
     <title>PIXO</title>
     <link rel="stylesheet" href="static/style.css">
 </head>
-<body class="background-white">
+<body class="background-blue">
     <div class="header">
         <a href="/">PIXO</a>
         <div class="right-part">
@@ -20,12 +20,12 @@
             <li class="product-wrapper">
                 <a href="..." class="product"><img src="{{ item['photo_url']}}" alt=""></a>
                 <div class="product-text">
-                    <p>{{ item["price"] }}</p>
-                    <p>artist: attblae</p>
+                    <p style="color: #4f649b; font-weight: bold;">{{ item["price"] }}</p>
+                    <p style="color: #4f649b;">artist: attblae</p>
                 </div>
-                <div style="display: flex; justify-content: center; margin: 20px; gap: 30px;">
-                    <button>Buy right now</button>
-                    <button>Put in the cart</button>
+                <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
+                    <button>Buy now</button>
+                    <button>Cart</button>
                 </div>
             </li>
             {% endfor %}
