@@ -158,6 +158,11 @@
   /* background-color: blue; */
 }
 
+@font-face {
+  font-family: Cinzel;
+  src: url(fonts/ShardieBrush.woff);
+}
+
 div {
   color: white;
 }
@@ -193,7 +198,9 @@ ol {
 }
 
 h1 {
-    font-size: 250px;
+  font-family: Cinzel;
+  font-size: 100px;
+  letter-spacing: 10px;
 }
 
 h2 {
