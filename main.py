@@ -248,20 +248,6 @@ def create_tables():
                     card VARCHAR(19) UNIQUE
                 );
         """
-        """
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username VARCHAR(30) UNIQUE,
-                password VARCHAR(255),
-                name VARCHAR(35),
-                surname VARCHAR(35),
-                patronymic VARCHAR(35),
-                phone VARCHAR(11) UNIQUE,
-                email VARCHAR(50) UNIQUE,
-                pasport VARCHAR(16) UNIQUE,
-                card VARCHAR(19) UNIQUE
-            );
-    """
     )
     cursor.execute(
         """
@@ -288,4 +274,3 @@ if __name__ == "__main__":
         port=8657,
         reload=True
     )
-    # sdasdasda
