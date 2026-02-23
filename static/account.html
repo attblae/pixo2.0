@@ -26,18 +26,14 @@
         </div>
         <div class="body-account">
             <ol class="products">
+                {% for item in arts %}
                 <li class="posts">
-                    <a href="..." class="product"><img src="static/images/imag.png" alt=""></a>
+                    <a href="..." class="product"><img src="{{ item['photo_url']}}" alt=""></a>
                     <div class="product-text">
-                        <p>500$</p>
+                        <p>{{ item['price'] }}$</p>
                     </div>
                 </li>
-                <li class="posts">
-                    <a href="..." class="product"><img src="static/images/imag.png" alt=""></a>
-                    <div class="product-text">
-                        <p>500$</p>
-                    </div>
-                </li>
+                {% endfor %}
             </ol>
         </div>
     </div>

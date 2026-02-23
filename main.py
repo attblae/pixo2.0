@@ -95,9 +95,34 @@ def login_page():
     return FileResponse("static/login.html")
 
 
-@app.get("/account")
-def account_page():
-    return FileResponse("static/account.html")
+@app.get("/account", response_class=HTMLResponse)
+async def catalog_page(request: Request):
+    con = sqlite3.connect("base/tables.sql")
+    cursor = con.cursor()
+
+    post = cursor.execute(
+        """
+            SELECT * FROM posts
+            JOIN users ON posts.user_id = users.id
+            WHERE users.username = "attblae"
+        """
+    ).fetchall()
+
+    context = {
+        "request": request,
+        "arts": [
+        ]
+    }
+
+    for i in range(3):
+        context["arts"].append(
+            {
+                "price": post[i][2],
+                "photo_url": post[i][4]
+            }
+        )
+
+    return templates.TemplateResponse("account.html", context)
 
 
 @app.get("/post")
@@ -133,7 +158,6 @@ async def catalog_page(request: Request):
         )
 
     return templates.TemplateResponse("catalog.html", context)
-    # return FileResponse("static/catalog.html")
 
 @app.get("/support")
 def support_page():

@@ -6,14 +6,12 @@
 .background-blue {
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
   background-color: #4f649b;
 }
 
 .background-white {
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
   background-color: #4f649b;
 }
 
@@ -190,6 +188,12 @@ ol {
   list-style-type:  none;
 }
 
+li {
+  font-family: Poppins;
+  font-size: 25px;
+  color: white;
+}
+
 .btn, button {
   color: white;
   font-family: Eden;
@@ -212,7 +216,7 @@ ol {
 h1 {
   color: white;
   font-family: Eden;
-  font-size: 250px;
+  font-size: 100px;
   letter-spacing: 30px;
   font-weight: normal;
 }
@@ -220,7 +224,7 @@ h1 {
 h2 {
   color: white;
   font-family: Poppins;
-  font-size: 70px;
+  font-size: 50px;
   font-weight: normal;
 }
 
