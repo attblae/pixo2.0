@@ -6,14 +6,20 @@
 .background-blue {
   position: relative;
   min-height: 100vh;
-  background-color: #4f649b;
+  background-color: #bcc1c5;
 }
 
 .background-white {
   position: relative;
   min-height: 100vh;
-  background-color: #f5f3de;
+  background-color: #efe8de;
 }
+
+/*.background-white {
+  position: relative;
+  min-height: 100vh;
+  background-color: #f5f3de;
+}*/
 
 .background-picture {
     position: absolute;
@@ -61,9 +67,8 @@
 .input {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  /* background-color: blueviolet; */
+  /*background-color: blueviolet;*/
 }
 
 
@@ -79,9 +84,9 @@
 
 .product-wrapper {
   position: relative;
-  border: 10px solid #f5f3de;
+  border: 10px solid #bcc1c5;
   border-radius: 20px;
-  background: #f5f3de;
+  background: #bcc1c5;
   margin: 0 30px 30px 0;
   text-decoration: none;
   min-width: 20%;
@@ -141,16 +146,38 @@
 
 .posts {
   position: relative;
-  border: 10px solid #4f649b;
+  border: 10px solid #bcc1c5;
   border-radius: 20px;
-  background: #4f649b;
+  background: #bcc1c5;
   margin: 0 30px 30px 0;
   text-decoration: none;
   min-width: 20%;
   /* max-width: 20%; */
   height: 350px;
   overflow: hidden;
-  /* background-color: blue */
+  /*background-color: blue*/
+}
+
+/*Post uploading: */
+
+.body-post {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  min-height: 500px;
+  /*background-color: blue;*/
+}
+
+.post {
+  position: relative;
+  border: 10px solid #bcc1c5;
+  border-radius: 20px;
+  background: #bcc1c5;
+  /*margin: 0 30px 30px 0;*/
+  text-decoration: none;
+  height: 500px;
+  overflow: hidden;
+  /*background-color: blue;*/
 }
 
 .footer {
@@ -182,7 +209,7 @@ div {
 a {
   font-family: Poppins;
   font-size: 25px;
-  color: white;
+  color: #25302c;
   /* font-family: PoppinsRegular; */
   text-decoration: none;
   transition-duration: 0.4s;
@@ -199,11 +226,11 @@ ol {
 li {
   font-family: Poppins;
   font-size: 25px;
-  color: white;
+  color: #25302c;
 }
 
 .btn, button {
-  color: white;
+  color: #f1ead8;
   font-family: Eden;
   font-weight: bold;
   font-size: 25px;
@@ -214,13 +241,13 @@ li {
   box-sizing: border-box;
   border: 0;
   border-radius: 15px;
-  background: white;
-  color: #4f649b;
+  background: #f1ead8;
+  color: #25302c;
   font-size: 30px;
 }
 
 h1 {
-  color: white;
+  color: #25302c;
   font-family: Eden;
   font-size: 100px;
   letter-spacing: 30px;
@@ -228,14 +255,29 @@ h1 {
 }
 
 h2 {
-  color: white;
+  color: #25302c;
   font-family: Poppins;
   font-size: 50px;
   font-weight: normal;
 }
 
 p {
-  color: white;
+  color: #25302c;
   font-family: Poppins;
   font-size: 25px;
+}
+
+input {
+    height: 40px;
+    width: 250px;
+    border: 0;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    background-color: #aba49e;
+    color: #25302c;
+    transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+input:hover {
+    box-shadow: 0px 0px 10px 0px #f5f3de
 }
