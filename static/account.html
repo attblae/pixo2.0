@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <title>PIXO</title>
     <link rel="stylesheet" href="static/style.css">
+    <style>
+        p {color: #4f649b}
+        a {color: #4f649b}
+        h1 {color: #4f649b}
+        h2 {color: #4f649b}
+    </style>
 </head>
 <body class="background-white">
     <div class="header">
@@ -16,13 +22,13 @@
     </div>
     <div class="content">
         <div class="header-account">
-            <img src="static/images/imag.png" alt="" style="width: 10%;">
             <div style="display: flex; gap: 20px; padding-left: 20px; align-items: center;">
+                <img src="static/images/imag.png" alt="" style="width: 15%;">
                 <p>username</p>
                 <p>amount art</p>
-                <a href="/upload_post">upload new post</a>
+                <a href="/post">upload new post</a>
             </div>
-            <a href="/backet" style="display: flex; align-items: center; margin-left: 70%;">backet</a>
+            <a href="/backet" style="padding-right: 20px">backet</a>
         </div>
         <div class="body-account">
             <ol class="products">
@@ -30,7 +36,7 @@
                 <li class="posts">
                     <a href="..." class="product"><img src="{{ item['photo_url']}}" alt=""></a>
                     <div class="product-text">
-                        <p>{{ item['price'] }}$</p>
+                        <p style="color: white">{{ item['price'] }}$</p>
                     </div>
                 </li>
                 {% endfor %}
