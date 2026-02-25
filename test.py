@@ -1,4 +1,6 @@
 import sqlite3
+from consts import DB_LINK
+
 
 def test_posts():
     URLS = [
@@ -8,7 +10,7 @@ def test_posts():
         "https://img.freepik.com/free-photo/waterfall-chae-son-national-park-lampang-thailand_554837-639.jpg?semt=ais_user_personalization&w=740&q=80"
     ]
     for url in URLS:
-        con = sqlite3.connect("base/tables.sql")
+        con = sqlite3.connect(DB_LINK)
         cursor = con.cursor()
         cursor.execute(
             """
