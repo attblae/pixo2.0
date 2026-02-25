@@ -2,16 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PIXO</title>
+    <title>pixo</title>
     <link rel="stylesheet" href="static/style.css">
     <style>
-        p {color: #4f649b}
-        a {color: #4f649b}
-        h1 {color: #4f649b}
-        h2 {color: #4f649b}
+        .btn, button {
+          color: #f1ead8;
+          font-family: Eden;
+          font-weight: bold;
+          font-size: 25px;
+          appearance: none;
+          display: inline-block;
+          width: auto;
+          max-width: 200px;
+          box-sizing: border-box;
+          border: 0;
+          border-radius: 15px;
+          background: #aba49e;
+          color: #25302c;
+          font-size: 30px;
+        }
     </style>
 </head>
-<body class="background-white">
+<body class="background-blue">
     <div class="header">
         <a href="/">PIXO</a>
         <div class="right-part">
@@ -36,7 +48,7 @@
                 <li class="posts">
                     <a href="..." class="product"><img src="{{ item['photo_url']}}" alt=""></a>
                     <div class="product-text">
-                        <p style="color: white">{{ item['price'] }}$</p>
+                        <p>{{ item['price'] }}$</p>
                     </div>
                 </li>
                 {% endfor %}

@@ -2,8 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PIXO</title>
+    <title>pixo</title>
     <link rel="stylesheet" href="static/style.css">
+    <style>
+        button {
+          font-size: 30px;
+          border: 5px solid #aba49e;
+          background: #aba49e;
+        }
+        .post {
+          position: relative;
+          border: 10px solid #bcc1c5;
+          border-radius: 20px;
+          background: #bcc1c5;
+          height: 500px;
+          overflow: hidden;
+        }
+        .product {
+          display: flex;
+          justify-content: center;
+          max-width: auto;
+          height: 70%;
+          /* background-color: red; */
+        }
+    </style>
 </head>
 <body class="background-white">
     <div class="header">
@@ -15,20 +37,18 @@
         </div>
     </div>
     <div class="content">
-        <div class="input">
+        <div class="input" style="margin-bottom: 3%">
             <input type="text" placeholder="Link" id="link">
             <input type="text" placeholder="Price" id="price">
-            <button style="margin-bottom: 5%" onclick="upload()">Upload</button>
+            <button onclick="upload()">Upload</button>
         </div>
-        <div class="body-account">
-            <ol class="products">
-                <li class="posts">
-                    <a href="..." class="product"><img src="static/images/imag.png" alt=""></a>
-                    <div class="product-text">
-                        <p>500$</p>
-                    </div>
-                </li>
-            </ol>
+        <div class="body-post">
+            <div class="post">
+                <img src="static/images/imag.png" class="product" alt="">
+                <div class="product-text">
+                    <p>500$</p>
+                </div>
+            </div>
         </div>
     </div>
     <div class="footer">
