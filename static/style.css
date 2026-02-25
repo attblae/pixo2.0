@@ -162,15 +162,9 @@
 
 .post {
   position: relative;
-<<<<<<< HEAD
   border: 10px solid #efe8de;
   border-radius: 20px;
   background: #efe8de;
-=======
-  border: 10px solid #bcc1c5;
-  border-radius: 20px;
-  background: #bcc1c5;
->>>>>>> fa3f0fe099ee153a1832a0dc854605205218217e
   /*margin: 0 30px 30px 0;*/
   text-decoration: none;
   height: 500px;

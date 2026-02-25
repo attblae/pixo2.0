@@ -21,8 +21,9 @@
                 <p>username</p>
                 <p>amount art</p>
                 <a href="/post">upload new post</a>
+                <a href="/backet">backet</a>
             </div>
-            <a href="/backet" style="padding-right: 20px">backet</a>
+            <a href="/" style="padding-right: 20px" onclick="singOut()">sing out</a>
         </div>
         <div class="body-account">
             <ol class="products">
@@ -62,7 +63,12 @@
                 }
             }
             
-        });
+            });
+
+            async function singOut() {
+                const token = localStorage.getItem("token");
+                localStorage.removeItem("token");
+            }
     </script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PIXO</title>
+    <title>pixo</title>
     <link rel="stylesheet" href="static/style.css">
         <style>
         button {
@@ -22,12 +22,15 @@
         </div>
     </div>
     <div class="content">
-        <div class="input">
+        <div class="input" style="margin-top: 10%;">
             <input type="text" placeholder="Username" id="username">
             <input type="password" placeholder="Password" id="password">
             <button onclick="check_user()">Login</button>
         </div>
-    <p style="display: flex; align-items: center; justify-content: center; gap: 20px;">Don't have account?<a href="/create">Create account</a></p>
+        <p style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+            Don't have account?
+            <a href="/create">Create account</a>
+        </p>
     </div>
     <div class="footer">
         <a href="/">PIXO</a>
