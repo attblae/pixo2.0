@@ -49,9 +49,9 @@ def posts_page():
     return FileResponse("static/upload_post.html")
 
 
-@app.get("/backet")
-def backet_page():
-    return FileResponse("static/backet.html")
+@app.get("/basket")
+def basket_page():
+    return FileResponse("static/basket.html")
 
 @app.get("/catalog", response_class=HTMLResponse)
 async def catalog_page(request: Request):
