@@ -5,34 +5,30 @@
     <title>pixo</title>
     <link rel="stylesheet" href="static/style.css">
         <style>
-        .btn, button {
-          color: #f1ead8;
-          font-family: Eden;
-          font-weight: bold;
-          font-size: 25px;
-          appearance: none;
-          display: inline-block;
-          width: auto;
-          max-width: 200px;
-          box-sizing: border-box;
-          border: 0;
-          border-radius: 15px;
-          background: #aba49e;
-          color: #25302c;
-          font-size: 30px;
-        }
+            button {
+            border: 5px solid #aba49e;
+            background: #aba49e;
+            }
+            button:hover {
+                background-color: #8f857c;
+                border-color: #8f857c;
+                }
     </style>
 </head>
 <body class="background-blue">
     <div class="header">
         <a href="/">pixo</a>
+        <div style="display: flex; gap: 5px; align-items: center; justify-content: center;">
+            <input type="search" placeholder="Search..." id="search" style="margin-top: 5px;">
+            <button style="height: 42px;">⌕</button>
+        </div>
         <div class="right-part">
             <a href="/support">Support</a>
             <a href="/about_us">About us</a>
             <a href="/account" target="_blank">Account</a>
         </div>
     </div>
-    <div class="content">
+    <div class="content" style="padding-top: 5%;">
         <ol class="products">
             {% for item in arts %}
             <li class="product-wrapper">
@@ -43,7 +39,7 @@
                 </div>
                 <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
                     <button>Buy now</button>
-                    <button>basket</button>
+                    <button>Basket</button>
                 </div>
             </li>
             {% endfor %}
