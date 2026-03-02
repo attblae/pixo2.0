@@ -144,8 +144,42 @@ def valid_user_creation(data):
     con.commit()
     con.close()
 
+def add_to_basket(data, username):
+    con = sqlite3.connect(DB_LINK)
+    cursor = con.cursor()
+
+    price = data.price
+    link = data.link
+
+    post_exists = cursor.execute(
+        """
+            SELECT link FROM basket_posts
+            INNER JOIN users
+            ON basket_posts.user_id = users.id
+            WHERE users.username = ? and basket_posts.link = ?
+        """, (username, link,)
+    ).fetchone()
+    if not post_exists:
+        cursor.execute(
+            """
+                INSERT INTO basket_posts (
+                    user_id,
+                    price,
+                    link
+                )
+                VALUES (
+                    (SELECT id FROM users WHERE username = ?),
+                    ?,
+                    ?
+                )
+            """, (username, float(price), link)
+        )
+        con.commit()
+    cursor.close()
+    con.close()
+
 def check_token_time(data):
-    payload = jwt.decode(data.access_token, SECRET_KEY, algorithms=[ALGORITHM])
+    payload = jwt.decode(data, SECRET_KEY, algorithms=[ALGORITHM])
     expires_at = payload["exp"]
     username = payload["sub"]
 

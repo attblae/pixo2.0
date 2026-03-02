@@ -6,13 +6,18 @@
     <link rel="stylesheet" href="static/style.css">
         <style>
             button {
-            border: 5px solid #aba49e;
-            background: #aba49e;
+                border: 5px solid #aba49e;
+                background: #aba49e;
             }
             button:hover {
                 background-color: #8f857c;
                 border-color: #8f857c;
-                }
+            }
+
+            input {
+                background-color: #efe8de;
+                border-color: #efe8de;
+            }
     </style>
 </head>
 <body class="background-blue">
@@ -39,7 +44,7 @@
                 </div>
                 <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
                     <button>Buy now</button>
-                    <button>Basket</button>
+                    <button data-price="{{ item['price'] }}" data-url="{{ item['photo_url']}}" onclick="sendToBasket(this)">Basket</button>
                 </div>
             </li>
             {% endfor %}
@@ -50,5 +55,6 @@
         <p>89999999999</p>
         <p>some information</p>
     </div>
+    <script src="js/sendToBasket.js"></script>
 </body>
 </html>

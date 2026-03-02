@@ -48,10 +48,10 @@ async def account_page(request: Request):
 def posts_page():
     return FileResponse("static/upload_post.html")
 
-
-@app.get("/basket")
-def basket_page():
-    return FileResponse("static/basket.html")
+@app.get("/basket/{username}",  response_class=HTMLResponse)
+def basket_page(request: Request, username: str):
+    context = get_basket_posts(request)
+    return templates.TemplateResponse("basket.html", context)
 
 @app.get("/catalog", response_class=HTMLResponse)
 async def catalog_page(request: Request):
@@ -70,6 +70,12 @@ def about_us_page():
 
 # posts:
 
+@app.post("/put_in_basket")
+def add_posts_to_basket(data: BasketInfo):
+    username = check_token_time(data.access_token)
+    add_to_basket(data, username)
+    return {"status": "ok"}
+
 @app.post("/login_account")
 def log_in_account(data: Login):
     response = valid_login(data)
@@ -84,8 +90,8 @@ def creating_user(data: CreatingUser):
 
 @app.post("/check_token")
 def check_token(data: Token):
-    username = check_token_time(data)
-    return {"status": "ok"}, username
+    username = check_token_time(data.access_token)
+    return {"username": username}
 
 
 if __name__ == "__main__":
