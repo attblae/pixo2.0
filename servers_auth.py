@@ -178,6 +178,20 @@ def add_to_basket(data, username):
     cursor.close()
     con.close()
 
+def get_basket_posts(request, username):
+    con = sqlite3.connect(DB_LINK)
+    cursor = con.cursor()
+    cursor.execute(
+        """
+            SELECT * FROM basket_posts
+            INNER JOIN users
+            ON basket_posts.user_id = users.id
+            WHERE users.username = ?
+        """, (username,)
+    )
+    cursor.close()
+    con.close()
+
 def check_token_time(data):
     payload = jwt.decode(data, SECRET_KEY, algorithms=[ALGORITHM])
     expires_at = payload["exp"]

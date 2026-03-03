@@ -21,7 +21,8 @@
                 <p>username</p>
                 <p>amount art</p>
                 <a href="/post">upload new post</a>
-                <a href="/basket">basket</a>
+                <p onclick="toBasket()">basket</p>
+<!--                <a href="/basket">basket</a>-->
             </div>
             <a href="/" style="padding-right: 20px" onclick="singOut()">sing out</a>
         </div>
@@ -72,6 +73,11 @@
             const token = localStorage.getItem("token");
             localStorage.removeItem("token");
         };
+
+        async function toBasket() {
+            const username = localStorage.getItem("username");
+            window.location.href = "/basket/{username}"
+        }
     </script>
 </body>
 </html>
