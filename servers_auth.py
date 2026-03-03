@@ -1,5 +1,5 @@
 from datetime import timedelta
-from jose import jwt
+from jose import jwt, exceptions
 from fastapi import HTTPException
 from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
@@ -154,11 +154,12 @@ def add_to_basket(data, username):
     post_exists = cursor.execute(
         """
             SELECT link FROM basket_posts
-            INNER JOIN users
+            JOIN users
             ON basket_posts.user_id = users.id
             WHERE users.username = ? and basket_posts.link = ?
         """, (username, link,)
-    ).fetchone()
+    ).fetchall()
+
     if not post_exists:
         cursor.execute(
             """
@@ -175,29 +176,46 @@ def add_to_basket(data, username):
             """, (username, float(price), link)
         )
         con.commit()
-    cursor.close()
-    con.close()
+        con.close()
+
 
 def get_basket_posts(request, username):
     con = sqlite3.connect(DB_LINK)
     cursor = con.cursor()
-    cursor.execute(
+    posts = cursor.execute(
         """
             SELECT * FROM basket_posts
             INNER JOIN users
             ON basket_posts.user_id = users.id
             WHERE users.username = ?
         """, (username,)
-    )
+    ).fetchall()
     cursor.close()
     con.close()
+    print(posts)
+    context = {
+        "request": request,
+        "arts": [
+        ]
+    }
+
+    for post in posts:
+        # print(post)
+        context["arts"].append(
+            {
+                "price": post[1],
+                "photo_url": post[2]
+            }
+        )
+
+    return context
 
 def check_token_time(data):
-    payload = jwt.decode(data, SECRET_KEY, algorithms=[ALGORITHM])
-    expires_at = payload["exp"]
-    username = payload["sub"]
-
-    if time.time() >= expires_at:
+    try:
+        payload = jwt.decode(data, SECRET_KEY, algorithms=[ALGORITHM])
+    except exceptions.ExpiredSignatureError:
         raise HTTPException(detail="Token expired", status_code=404)
+
+    username = payload["sub"]
 
     return username

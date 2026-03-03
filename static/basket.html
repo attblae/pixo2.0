@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PIXO</title>
-    <link rel="stylesheet" href="static/style.css">
+    <title>pixo</title>
+    <link rel="stylesheet" href="../static/style.css">
 </head>
 <body class="background-blue">
     <div class="header">
@@ -16,34 +16,25 @@
     </div>
     <div class="content">
         <div class="header-account">
-            <a href="/account"><img src="static/images/imag.png" alt="" style="width: 83%; background-color: blue"></a>
+            <a href="/account"><img src="../static/images/imag.png" alt="" style="width: 83%; background-color: blue"></a>
             <div style="display: flex; gap: 20px; align-items: center;">
                 <p>username</p>
                 <a href="/account">amount art</a>
             </div>
         </div>
         <div class="body-account">
-            <ol>
-                    <li class="product-wrappe">
-                    <a href="..." class="product"><img src="static/images/imag.png" alt=""></a>
-                    <div class="product-text">
-                        <p>500$</p>
-                        <p>artist: attblae</p>
-                    </div>
-                    <div style="display: flex; justify-content: center; margin: 20px; gap: 30px;">
-                        <button>Buy right now</button>
-                    </div>
-                </li>
-                    <li class="product-wrappe">
-                    <a href="..." class="product"><img src="static/images/imag.png" alt=""></a>
-                    <div class="product-text">
-                        <p>500$</p>
-                        <p>artist: attblae</p>
-                    </div>
-                    <div style="display: flex; justify-content: center; margin: 20px; gap: 30px;">
-                        <button>Buy right now</button>
-                    </div>
-                </li>
+            <ol class="products">
+                {% for item in arts %}
+                <li class="product-wrapper">
+                <a href="..." class="product"><img src="{{ item['photo_url']}}" alt=""></a>
+                <div class="product-text">
+                    <p>{{ item["price"] }} $</p>
+                    <p>artist: attblae</p>
+                </div>
+                <div style="display: flex; justify-content: center; margin: 20px; gap: 30px;">
+                    <button>Buy right now</button>
+                </div>
+                {% endfor %}
             </ol>
         </div>
     </div>

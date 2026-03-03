@@ -38,7 +38,7 @@ def creating_tables():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER,
                 price DECIMAL(11, 2) not NULL,
-                link VARCHAR(40) not NULL UNIQUE,
+                link VARCHAR(40) not NULL,
                 FOREIGN KEY (user_id) REFERENCES users (id)
             )
         """

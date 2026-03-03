@@ -32,9 +32,9 @@ def test_posts():
         con.commit()
         con.close()
 
-if __name__ == "__main__":
-    con = sqlite3.connect(DB_LINK)
-    cursor = con.cursor()
-    s = cursor.execute("select * from basket_posts")
-    from pprint import pprint
-    pprint(s.fetchall())
+# if __name__ == "__main__":
+#     con = sqlite3.connect(DB_LINK)
+#     cursor = con.cursor()
+#     s = cursor.execute("select * from basket_posts")
+#     from pprint import pprint
+#     pprint(s.fetchall())
