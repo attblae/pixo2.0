@@ -43,7 +43,7 @@
                     </div>
                     <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
                         <button>Buy</button>
-                        <button onclick="delete()" data-price="{{ item['price'] }}" data-url="{{ item['photo_url']}}">Delete</button>
+                        <button onclick="postDeleting(this)" data-price="{{ item['price'] }}" data-url="{{ item['photo_url']}}">Delete</button>
                     </div>
                 </li>
                 {% endfor %}
@@ -56,12 +56,12 @@
         <p>some information</p>
     </div>
     <script>
-        async function delete() {
+        async function postDeleting(button) {
             const token = localStorage.getItem("token");
             const price = button.dataset.price;
             const url = button.dataset.url;
 
-            const response = await fetch("/put_in_basket", {
+            const response = await fetch("/delete_from_basket", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -72,6 +72,10 @@
                     price: price
                 })
             });
+
+            if (response.ok) {
+            const username = localStorage.getItem("username");
+            window.location.href = `/basket/${username}`
             }
         }
     </script>

@@ -176,7 +176,14 @@ def add_to_basket(data, username):
             """, (username, float(price), link)
         )
         con.commit()
-        con.close()
+
+    pr = cursor.execute(
+        """
+            SELECT * FROM basket_posts
+        """
+    )
+    print(pr)
+    con.close()
 
 
 def get_basket_posts(request, username):
@@ -207,8 +214,7 @@ def get_basket_posts(request, username):
 
     return context
 
-def delete_from_basket(data, username):
-    print("?????????????????????????")
+def delete_basket_post(data, username):
     link = data.link
     con = sqlite3.connect(DB_LINK)
     cursor = con.cursor()
@@ -222,12 +228,18 @@ def delete_from_basket(data, username):
         """, (username, link,)
     ).fetchall()
 
+    print(post_exists)
+
     if post_exists:
         cursor.execute(
             """
-                DELETE FROM basket_posts
-                WHERE link = ?
-            """
+            DELETE FROM basket_posts
+            WHERE link = ?
+            AND user_id = (
+                SELECT id FROM users WHERE username = ?
+            )
+            """,
+            (link, username,)
         )
         con.commit()
 
@@ -236,7 +248,7 @@ def delete_from_basket(data, username):
             SELECT * FROM basket_posts
         """
     ).fetchall()
-    print(pr)
+    # print(pr)
     con.close()
 
 def check_token_time(data):

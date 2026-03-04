@@ -44,7 +44,9 @@
                 </div>
                 <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
                     <button>Buy now</button>
-                    <button data-price="{{ item['price'] }}" data-url="{{ item['photo_url']}}" onclick="sendToBasket(this)">Basket</button>
+                    <button data-price="{{ item['price'] }}" data-url="{{ item['photo_url']}}" onclick="sendToBasket(this)">
+                        Basket
+                    </button>
                 </div>
             </li>
             {% endfor %}
@@ -66,7 +68,13 @@
             const price = button.dataset.price;
             const url = button.dataset.url;
 
-            const response = await fetch("/delete_from_basket", {
+            console.log({
+                access_token: token,
+                link: url,
+                price: price
+            });
+
+            const response = await fetch("/put_in_basket", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

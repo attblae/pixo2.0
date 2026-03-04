@@ -96,7 +96,7 @@ def check_token(data: Token):
 @app.post("/delete_from_basket")
 def delete_post(data: BasketInfo):
     username = check_token_time(data.access_token)
-    delete_from_basket(data, username)
+    delete_basket_post(data, username)
     return {"status": "ok"}
 
 
