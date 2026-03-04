@@ -68,7 +68,7 @@ def get_catalog_posts(request):
         ]
     }
 
-    for i in range(3):
+    for i in range(len(post)):
         context["arts"].append(
             {
                 "price": post[i][2],
@@ -250,6 +250,50 @@ def delete_basket_post(data, username):
     ).fetchall()
     # print(pr)
     con.close()
+
+def uploading_post(data, username):
+    con = sqlite3.connect(DB_LINK)
+    cursor = con.cursor()
+
+    link = data.link
+    price = data.price
+
+    post_exists = cursor.execute(
+        """
+            SELECT photo_url FROM posts
+            JOIN users
+            ON posts.user_id = users.id
+            WHERE users.username = ? and posts.photo_url = ?
+        """, (username, link,)
+    ).fetchall()
+
+    if not post_exists:
+        cursor.execute(
+            """
+                INSERT INTO posts (
+                    user_id,
+                    price,
+                    photo_url
+                )
+                VALUES (
+                    (SELECT id FROM users WHERE username = ?),
+                    ?,
+                    ?
+                )
+            """, (username, float(price), link)
+        )
+        con.commit()
+
+    pr = cursor.execute(
+        """
+            SELECT * FROM posts
+        """
+    ).fetchall()
+
+    print(pr)
+
+    con.close()
+
 
 def check_token_time(data):
     try:

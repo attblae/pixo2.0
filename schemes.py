@@ -23,7 +23,7 @@ class PostsInfo(BaseModel):
     link: str
     price: str
 
-class BasketInfo(BaseModel):
+class PostInfo(BaseModel):
     access_token: str
     link: str
     price: str

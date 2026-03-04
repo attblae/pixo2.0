@@ -29,7 +29,7 @@
 </head>
 <body class="background-white">
     <div class="header">
-        <a href="/">PIXO</a>
+        <a href="/">pixo</a>
         <div class="right-part">
             <a href="/catalog">Catalog</a>
             <a href="/support">Support</a>
@@ -57,39 +57,31 @@
         <p>some information</p>
     </div>
     <script>
-        const token = localStorage.getItem("token");
-        document.addEventListener("DOMContentLoaded", async function () {
-        if (!token) {
-            window.location.href = "/login";
-        } else {
-            const response = await fetch("/check_token", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    access_token: token
-                })
-            });
-            if (!response.ok) {
-                localStorage.removeItem("token");
-                window.location.href = "/login";
-            }
-        }
-        });
-
-        const link = document.getElementById("link").value
-        const price = document.getElementById("price").value
-
         async function upload() {
+            const token = localStorage.getItem("token");
+            const link = document.getElementById("link").value
+            const price = document.getElementById("price").value
+
+            if (!token) {
+                window.location.href = "/login";
+               }
+
             const response = await fetch("/uploading", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                    access_token: token,
                     link: link,
                     price: price
                 })
             })
-        const data = await response.json();}
 
+            if (response.ok) {
+                alert("You have uploaded art!")
+            } else {
+                alert("No")
+            }
+        }
     </script>
 </body>
 </html>

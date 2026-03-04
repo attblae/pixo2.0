@@ -71,7 +71,7 @@ def about_us_page():
 # posts:
 
 @app.post("/put_in_basket")
-def add_posts_to_basket(data: BasketInfo):
+def add_posts_to_basket(data: PostInfo):
     username = check_token_time(data.access_token)
     add_to_basket(data, username)
     return {"status": "ok"}
@@ -94,11 +94,16 @@ def check_token(data: Token):
     return {"username": username}
 
 @app.post("/delete_from_basket")
-def delete_post(data: BasketInfo):
+def delete_post(data: PostInfo):
     username = check_token_time(data.access_token)
     delete_basket_post(data, username)
     return {"status": "ok"}
 
+@app.post("/uploading")
+def upload_post(data: PostInfo):
+    username = check_token_time(data.access_token)
+    uploading_post(data, username)
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     # 127.0.0.1
