@@ -93,6 +93,12 @@ def check_token(data: Token):
     username = check_token_time(data.access_token)
     return {"username": username}
 
+@app.post("/delete_from_basket")
+def delete_post(data: BasketInfo):
+    username = check_token_time(data.access_token)
+    delete_from_basket(data, username)
+    return {"status": "ok"}
+
 
 if __name__ == "__main__":
     # 127.0.0.1

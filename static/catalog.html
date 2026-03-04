@@ -66,13 +66,7 @@
             const price = button.dataset.price;
             const url = button.dataset.url;
 
-            console.log({
-                access_token: token,
-                link: url,
-                price: price
-            });
-
-            const response = await fetch("/put_in_basket", {
+            const response = await fetch("/delete_from_basket", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

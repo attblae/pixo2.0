@@ -184,15 +184,12 @@ def get_basket_posts(request, username):
     cursor = con.cursor()
     posts = cursor.execute(
         """
-            SELECT * FROM basket_posts
+            SELECT price, link FROM basket_posts
             INNER JOIN users
             ON basket_posts.user_id = users.id
             WHERE users.username = ?
         """, (username,)
     ).fetchall()
-    cursor.close()
-    con.close()
-    print(posts)
     context = {
         "request": request,
         "arts": [
@@ -203,19 +200,50 @@ def get_basket_posts(request, username):
         # print(post)
         context["arts"].append(
             {
-                "price": post[1],
-                "photo_url": post[2]
+                "price": post[0],
+                "photo_url": post[1]
             }
         )
 
     return context
+
+def delete_from_basket(data, username):
+    print("?????????????????????????")
+    link = data.link
+    con = sqlite3.connect(DB_LINK)
+    cursor = con.cursor()
+
+    post_exists = cursor.execute(
+        """
+            SELECT link FROM basket_posts
+            JOIN users
+            ON basket_posts.user_id = users.id
+            WHERE users.username = ? and basket_posts.link = ?
+        """, (username, link,)
+    ).fetchall()
+
+    if post_exists:
+        cursor.execute(
+            """
+                DELETE FROM basket_posts
+                WHERE link = ?
+            """
+        )
+        con.commit()
+
+    pr = cursor.execute(
+        """
+            SELECT * FROM basket_posts
+        """
+    ).fetchall()
+    print(pr)
+    con.close()
 
 def check_token_time(data):
     try:
         payload = jwt.decode(data, SECRET_KEY, algorithms=[ALGORITHM])
     except exceptions.ExpiredSignatureError:
         raise HTTPException(detail="Token expired", status_code=404)
-
     username = payload["sub"]
 
     return username

@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <title>pixo</title>
     <link rel="stylesheet" href="../static/style.css">
+    <style>
+            button {
+                border: 5px solid #aba49e;
+                background: #aba49e;
+            }
+            button:hover {
+                background-color: #8f857c;
+                border-color: #8f857c;
+            }
+    </style>
 </head>
 <body class="background-blue">
     <div class="header">
@@ -16,24 +26,26 @@
     </div>
     <div class="content">
         <div class="header-account">
-            <a href="/account"><img src="../static/images/imag.png" alt="" style="width: 83%; background-color: blue"></a>
+            <a href="/account"><img src="../static/images/imag.png" alt="" style="width: 61%; padding-left: 20px"></a>
             <div style="display: flex; gap: 20px; align-items: center;">
                 <p>username</p>
                 <a href="/account">amount art</a>
             </div>
         </div>
-        <div class="body-account">
+        <div class="content">
             <ol class="products">
                 {% for item in arts %}
                 <li class="product-wrapper">
-                <a href="..." class="product"><img src="{{ item['photo_url']}}" alt=""></a>
-                <div class="product-text">
-                    <p>{{ item["price"] }} $</p>
-                    <p>artist: attblae</p>
-                </div>
-                <div style="display: flex; justify-content: center; margin: 20px; gap: 30px;">
-                    <button>Buy right now</button>
-                </div>
+                    <a href="..." class="product"><img src="{{ item['photo_url']}}" alt=""></a>
+                    <div class="product-text">
+                        <p style="font-family: Eden; font-size: 30px">{{ item["price"] }} $</p>
+                        <p>artist: attblae</p>
+                    </div>
+                    <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
+                        <button>Buy</button>
+                        <button onclick="delete()" data-price="{{ item['price'] }}" data-url="{{ item['photo_url']}}">Delete</button>
+                    </div>
+                </li>
                 {% endfor %}
             </ol>
         </div>
@@ -43,5 +55,25 @@
         <p>89999999999</p>
         <p>some information</p>
     </div>
+    <script>
+        async function delete() {
+            const token = localStorage.getItem("token");
+            const price = button.dataset.price;
+            const url = button.dataset.url;
+
+            const response = await fetch("/put_in_basket", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    access_token: token,
+                    link: url,
+                    price: price
+                })
+            });
+            }
+        }
+    </script>
     </body>
 </html>
