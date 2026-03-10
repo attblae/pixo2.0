@@ -190,6 +190,7 @@ def add_to_basket(data, username):
 def get_basket_posts(request, username):
     con = sqlite3.connect(DB_LINK)
     cursor = con.cursor()
+
     posts = cursor.execute(
         """
             SELECT price, link FROM basket_posts
@@ -198,6 +199,7 @@ def get_basket_posts(request, username):
             WHERE users.username = ?
         """, (username,)
     ).fetchall()
+
     context = {
         "request": request,
         "arts": [
@@ -205,7 +207,7 @@ def get_basket_posts(request, username):
     }
 
     for post in posts:
-        # print(post)
+        print(post)
         context["arts"].append(
             {
                 "price": post[0],
