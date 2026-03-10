@@ -3,6 +3,7 @@ from jose import jwt, exceptions
 from fastapi import HTTPException
 from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
+import shutil
 import sqlite3
 import time
 from consts import *
@@ -251,12 +252,14 @@ def delete_basket_post(data, username):
     # print(pr)
     con.close()
 
-def uploading_post(data, username):
+def uploading_post(price, username, file):
     con = sqlite3.connect(DB_LINK)
     cursor = con.cursor()
 
-    link = data.link
-    price = data.price
+    link = f"static/images/{file.filename}"
+
+    with open(link, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
 
     post_exists = cursor.execute(
         """
@@ -290,7 +293,7 @@ def uploading_post(data, username):
         """
     ).fetchall()
 
-    print(pr)
+    # print(pr)
 
     con.close()
 

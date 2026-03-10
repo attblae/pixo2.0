@@ -1,4 +1,4 @@
-from fastapi import Request, FastAPI
+from fastapi import Request, FastAPI, UploadFile, File, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 import uvicorn
@@ -100,9 +100,9 @@ def delete_post(data: PostInfo):
     return {"status": "ok"}
 
 @app.post("/uploading")
-def upload_post(data: PostInfo):
-    username = check_token_time(data.access_token)
-    uploading_post(data, username)
+def upload_post(file: UploadFile = File(...), price: str = Form(...), token: str = Form(...)):
+    username = check_token_time(token)
+    uploading_post(price, username, file)
     return {"status": "ok"}
 
 if __name__ == "__main__":

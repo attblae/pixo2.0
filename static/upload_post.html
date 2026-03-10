@@ -38,7 +38,7 @@
     </div>
     <div class="content">
         <div class="input" style="margin-bottom: 3%">
-            <input type="text" placeholder="Link" id="link">
+            <input type="file" id="file">
             <input type="text" placeholder="Price" id="price">
             <button onclick="upload()">Upload</button>
         </div>
@@ -59,22 +59,22 @@
     <script>
         async function upload() {
             const token = localStorage.getItem("token");
-            const link = document.getElementById("link").value
-            const price = document.getElementById("price").value
+            const price = document.getElementById("price").value;
+            const file = document.getElementById("file").files[0];
 
             if (!token) {
                 window.location.href = "/login";
                }
 
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("token", token);
+            formData.append("price", price);
+            
             const response = await fetch("/uploading", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    access_token: token,
-                    link: link,
-                    price: price
-                })
-            })
+                body: formData
+            });
 
             if (response.ok) {
                 alert("You have uploaded art!")
