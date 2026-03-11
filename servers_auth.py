@@ -153,6 +153,8 @@ def add_to_basket(data, username):
     link = data.link
     print(link)
 
+    if link.startswith("static/"):
+        link = f"../{link}"
     post_exists = cursor.execute(
         """
             SELECT link FROM basket_posts
@@ -163,9 +165,6 @@ def add_to_basket(data, username):
     ).fetchall()
 
     if not post_exists:
-        if link.startswith("static/"):
-            link = f"../{link}"
-
         cursor.execute(
             """
                 INSERT INTO basket_posts (
