@@ -151,6 +151,7 @@ def add_to_basket(data, username):
 
     price = data.price
     link = data.link
+    print(link)
 
     post_exists = cursor.execute(
         """
@@ -162,6 +163,9 @@ def add_to_basket(data, username):
     ).fetchall()
 
     if not post_exists:
+        if link.startswith("static/"):
+            link = f"../{link}"
+
         cursor.execute(
             """
                 INSERT INTO basket_posts (
@@ -288,15 +292,6 @@ def uploading_post(price, username, file):
             """, (username, float(price), link)
         )
         con.commit()
-
-    pr = cursor.execute(
-        """
-            SELECT * FROM posts
-        """
-    ).fetchall()
-
-    # print(pr)
-
     con.close()
 
 
