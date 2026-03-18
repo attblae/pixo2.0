@@ -25,273 +25,273 @@ def verify_password(password: str, hashed: str) -> bool:
     return pwd_context.verify(password, hashed)
 
 def get_account_posts(request):
-    con = sqlite3.connect(DB_LINK)
-    cursor = con.cursor()
+ with sqlite3.connect(DB_LINK, timeout=5) as con:
+        cursor = con.cursor()
 
-    post = cursor.execute(
-        """
-            SELECT * FROM posts
-            JOIN users ON posts.user_id = users.id
-            WHERE users.username = "attblae"
-        """
-    ).fetchall()
+        post = cursor.execute(
+            """
+            SELECT posts.price, posts.photo_url, users.username
+            FROM posts
+            JOIN users
+            ON posts.user_id = users.id
+            """
+        ).fetchall()
 
-    context = {
-        "request": request,
-        "arts": [
-        ]
-    }
+        context = {
+            "request": request,
+            "arts": [
+            ]
+        }
 
-    if not post:
+        for i in range(len(post)):
+            context["arts"].append(
+                {
+                    "price": post[i][0],
+                    "photo_url": post[i][1],
+                    "username": post[i][2]
+                }
+            )
+
         return context
 
-    for i in range(3):
-        context["arts"].append(
-            {
-                "price": post[i][2],
-                "photo_url": post[i][4]
-            }
-        )
-
-    return context
-
 def get_catalog_posts(request):
-    con = sqlite3.connect(DB_LINK)
-    cursor = con.cursor()
+    with sqlite3.connect(DB_LINK, timeout=5) as con:
+        cursor = con.cursor()
 
-    post = cursor.execute(
-        "SELECT * FROM posts"
-    ).fetchall()
+        post = cursor.execute(
+            """
+            SELECT posts.price, posts.photo_url, users.username
+            FROM posts
+            JOIN users
+            ON posts.user_id = users.id
+            """
+        ).fetchall()
 
-    context = {
-        "request": request,
-        "arts": [
-        ]
-    }
+        context = {
+            "request": request,
+            "arts": [
+            ]
+        }
 
-    for i in range(len(post)):
-        context["arts"].append(
-            {
-                "price": post[i][2],
-                "photo_url": post[i][4]
-            }
-        )
+        for i in range(len(post)):
+            context["arts"].append(
+                {
+                    "price": post[i][0],
+                    "photo_url": post[i][1],
+                    "username": post[i][2]
+                }
+            )
 
-    return context
+        return context
 
 def valid_login(data):
-    con = sqlite3.connect(DB_LINK)
-    cursor = con.cursor()
+    with sqlite3.connect(DB_LINK, timeout=5) as con:
+        cursor = con.cursor()
 
-    hash_pass = cursor.execute("SELECT password FROM users WHERE username = ?", (data.username,)).fetchone()
+        hash_pass = cursor.execute("SELECT password FROM users WHERE username = ?", (data.username,)).fetchone()
 
-    if not hash_pass:
-        raise HTTPException(detail="User does not exists", status_code=404)
+        if not hash_pass:
+            raise HTTPException(detail="User does not exists", status_code=404)
 
-    if not verify_password(data.password, hash_pass[0]):
-        raise HTTPException(detail="Invalid password", status_code=404)
+        if not verify_password(data.password, hash_pass[0]):
+            raise HTTPException(detail="Invalid password", status_code=404)
 
-    con.close()
-    token = create_access_token(data.username)
+        token = create_access_token(data.username)
 
-    response = Token(access_token=token)
-    return response
+        response = Token(access_token=token)
+        return response
 
 def valid_user_creation(data):
-    con = sqlite3.connect(DB_LINK)
-    cursor = con.cursor()
-    data_information = data.model_dump()
-    if any(" " in data_info for data_info in data_information.values()):
-        raise HTTPException(status_code=400, detail="Information contains blank space")
+    with sqlite3.connect(DB_LINK, timeout=5) as con:
+        cursor = con.cursor()
+        data_information = data.model_dump()
+        if any(" " in data_info for data_info in data_information.values()):
+            raise HTTPException(status_code=400, detail="Information contains blank space")
 
-    if data.phone.startswith("+7"):
-        data.phone = '8' + data.phone.removeprefix('+7')
+        if data.phone.startswith("+7"):
+            data.phone = '8' + data.phone.removeprefix('+7')
 
-    username = cursor.execute("SELECT username FROM users WHERE username = ?", (data.username,)).fetchone()
+        username = cursor.execute("SELECT username FROM users WHERE username = ?", (data.username,)).fetchone()
 
-    if username:
-        raise HTTPException(detail="username is already used", status_code=404)
+        if username:
+            raise HTTPException(detail="username is already used", status_code=404)
 
-    if data.password_confirm != data.password:
-        raise HTTPException(detail="password does not confirmed", status_code=404)
+        if data.password_confirm != data.password:
+            raise HTTPException(detail="password does not confirmed", status_code=404)
 
-    cursor.execute(
-        """
-            INSERT INTO users (
-            username, 
-            password, 
-            name, 
-            surname, 
-            patronymic,
-            phone, 
-            email, 
-            pasport,
-            card
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """,
-        (
-            data.username,
-            hash_password(data.password),
-            data.name,
-            data.surname,
-            data.patronymic,
-            data.phone,
-            data.email,
-            data.pasport,
-            data.card
-        )
-    )
-    con.commit()
-    con.close()
-
-def add_to_basket(data, username):
-    con = sqlite3.connect(DB_LINK)
-    cursor = con.cursor()
-
-    price = data.price
-    link = data.link
-    print(link)
-
-    if link.startswith("static/"):
-        link = f"../{link}"
-    post_exists = cursor.execute(
-        """
-            SELECT link FROM basket_posts
-            JOIN users
-            ON basket_posts.user_id = users.id
-            WHERE users.username = ? and basket_posts.link = ?
-        """, (username, link,)
-    ).fetchall()
-
-    if not post_exists:
         cursor.execute(
             """
-                INSERT INTO basket_posts (
-                    user_id,
-                    price,
-                    link
+                INSERT INTO users (
+                username, 
+                password, 
+                name, 
+                surname, 
+                patronymic,
+                phone, 
+                email, 
+                pasport,
+                card
                 )
-                VALUES (
-                    (SELECT id FROM users WHERE username = ?),
-                    ?,
-                    ?
-                )
-            """, (username, float(price), link)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+            (
+                data.username,
+                hash_password(data.password),
+                data.name,
+                data.surname,
+                data.patronymic,
+                data.phone,
+                data.email,
+                data.pasport,
+                data.card
+            )
         )
         con.commit()
 
-    pr = cursor.execute(
-        """
-            SELECT * FROM basket_posts
-        """
-    )
-    print(pr)
-    con.close()
+def add_to_basket(data, username):
+    with sqlite3.connect(DB_LINK, timeout=5) as con:
+        cursor = con.cursor()
+
+        price = data.price
+        link = data.link
+        print(link)
+
+        if link.startswith("static/"):
+            link = f"../{link}"
+        post_exists = cursor.execute(
+            """
+                SELECT link FROM basket_posts
+                JOIN users
+                ON basket_posts.user_id = users.id
+                WHERE users.username = ? and basket_posts.link = ?
+            """, (username, link,)
+        ).fetchall()
+
+        if not post_exists:
+            cursor.execute(
+                """
+                    INSERT INTO basket_posts (
+                        user_id,
+                        price,
+                        link
+                    )
+                    VALUES (
+                        (SELECT id FROM users WHERE username = ?),
+                        ?,
+                        ?
+                    )
+                """, (username, float(price), link)
+            )
+            con.commit()
+
+        pr = cursor.execute(
+            """
+                SELECT * FROM basket_posts
+            """
+        )
+        print(pr)
 
 
 def get_basket_posts(request, username):
-    con = sqlite3.connect(DB_LINK)
-    cursor = con.cursor()
+    with sqlite3.connect(DB_LINK, timeout=5) as con:
+        cursor = con.cursor()
 
-    posts = cursor.execute(
-        """
-            SELECT price, link FROM basket_posts
-            INNER JOIN users
-            ON basket_posts.user_id = users.id
-            WHERE users.username = ?
-        """, (username,)
-    ).fetchall()
+        posts = cursor.execute(
+            """
+                SELECT price, link FROM basket_posts
+                INNER JOIN users
+                ON basket_posts.user_id = users.id
+                WHERE users.username = ?
+            """, (username,)
+        ).fetchall()
 
-    context = {
-        "request": request,
-        "arts": [
-        ]
-    }
+        context = {
+            "request": request,
+            "arts": [
+            ]
+        }
 
-    for post in posts:
-        print(post)
-        context["arts"].append(
-            {
-                "price": post[0],
-                "photo_url": post[1]
-            }
-        )
+        for post in posts:
+            print(post)
+            context["arts"].append(
+                {
+                    "price": post[0],
+                    "photo_url": post[1]
+                }
+            )
 
-    return context
+        return context
 
 def delete_basket_post(data, username):
     link = data.link
-    con = sqlite3.connect(DB_LINK)
-    cursor = con.cursor()
+    with sqlite3.connect(DB_LINK, timeout=5) as con:
+        cursor = con.cursor()
 
-    post_exists = cursor.execute(
-        """
-            SELECT link FROM basket_posts
-            JOIN users
-            ON basket_posts.user_id = users.id
-            WHERE users.username = ? and basket_posts.link = ?
-        """, (username, link,)
-    ).fetchall()
-
-    print(post_exists)
-
-    if post_exists:
-        cursor.execute(
+        post_exists = cursor.execute(
             """
-            DELETE FROM basket_posts
-            WHERE link = ?
-            AND user_id = (
-                SELECT id FROM users WHERE username = ?
-            )
-            """,
-            (link, username,)
-        )
-        con.commit()
+                SELECT link FROM basket_posts
+                JOIN users
+                ON basket_posts.user_id = users.id
+                WHERE users.username = ? and basket_posts.link = ?
+            """, (username, link,)
+        ).fetchall()
 
-    pr = cursor.execute(
-        """
-            SELECT * FROM basket_posts
-        """
-    ).fetchall()
-    # print(pr)
-    con.close()
+        print(post_exists)
+
+        if post_exists:
+            cursor.execute(
+                """
+                DELETE FROM basket_posts
+                WHERE link = ?
+                AND user_id = (
+                    SELECT id FROM users WHERE username = ?
+                )
+                """,
+                (link, username,)
+            )
+            con.commit()
+
+        pr = cursor.execute(
+            """
+                SELECT * FROM basket_posts
+            """
+        ).fetchall()
+        # print(pr)
 
 def uploading_post(price, username, file):
-    con = sqlite3.connect(DB_LINK)
-    cursor = con.cursor()
+    with sqlite3.connect(DB_LINK, timeout=5) as con:
+        cursor = con.cursor()
 
-    link = f"static/images/{file.filename}"
+        link = f"static/images/{file.filename}"
 
-    with open(link, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+        with open(link, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-    post_exists = cursor.execute(
-        """
-            SELECT photo_url FROM posts
-            JOIN users
-            ON posts.user_id = users.id
-            WHERE users.username = ? and posts.photo_url = ?
-        """, (username, link,)
-    ).fetchall()
-
-    if not post_exists:
-        cursor.execute(
+        post_exists = cursor.execute(
             """
-                INSERT INTO posts (
-                    user_id,
-                    price,
-                    photo_url
-                )
-                VALUES (
-                    (SELECT id FROM users WHERE username = ?),
-                    ?,
-                    ?
-                )
-            """, (username, float(price), link)
-        )
-        con.commit()
-    con.close()
+                SELECT photo_url FROM posts
+                JOIN users
+                ON posts.user_id = users.id
+                WHERE users.username = ? and posts.photo_url = ?
+            """, (username, link,)
+        ).fetchall()
+
+        if not post_exists:
+            cursor.execute(
+                """
+                    INSERT INTO posts (
+                        user_id,
+                        price,
+                        photo_url
+                    )
+                    VALUES (
+                        (SELECT id FROM users WHERE username = ?),
+                        ?,
+                        ?
+                    )
+                """, (username, float(price), link)
+            )
+            con.commit()
 
 
 def check_token_time(data):
