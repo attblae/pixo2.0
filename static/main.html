@@ -12,7 +12,7 @@
             <a href="/catalog">Catalog</a>
             <a href="/support">Support</a>
             <a href="/about_us">About us</a>
-            <a href="/account">Account</a>
+            <p onclick="toAccount()">Account</p>
         </div>
     </div>
     <div class="content">
@@ -34,5 +34,11 @@
         <p>89999999999</p>
         <p>some information</p>
     </div>
+    <script>
+            async function toAccount() {
+                const username = localStorage.getItem("username");
+                window.location.href = `/account/${username}`
+            }
+    </script>
 </body>
 </html>

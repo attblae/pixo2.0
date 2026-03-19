@@ -38,11 +38,10 @@ def login_page():
     return FileResponse("static/login.html")
 
 
-@app.get("/account", response_class=HTMLResponse)
-async def account_page(request: Request):
-    context = get_account_posts(request)
+@app.get("/account/{username}", response_class=HTMLResponse)
+async def account_page(request: Request, username: str):
+    context = get_account_posts(request, username)
     return templates.TemplateResponse("account.html", context)
-
 
 @app.get("/post")
 def posts_page():

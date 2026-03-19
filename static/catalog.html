@@ -30,7 +30,7 @@
         <div class="right-part">
             <a href="/support">Support</a>
             <a href="/about_us">About us</a>
-            <a href="/account" target="_blank">Account</a>
+            <p onclick="toAccount()">Account</p>
         </div>
     </div>
     <div class="content" style="padding-top: 5%;">
@@ -44,7 +44,7 @@
                 </div>
                 <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
                     <button>Buy now</button>
-                    <button data-price="{{ item['price'] }}" data-url="{{ item['photo_url']}}" onclick="sendToBasket(this)">
+                    <button data-price="{{ item['price'] }}" data-url="{{ item['photo_url']}}" data-username="{{ item['username']}}" onclick="sendToBasket(this)">
                         Basket
                     </button>
                 </div>
@@ -85,7 +85,12 @@
                     price: price
                 })
             });
-            }
+        }
+
+        async function toAccount() {
+            const username = localStorage.getItem("username");
+            window.location.href = `/account/${username}`;
+        }
     </script>
 </body>
 </html>

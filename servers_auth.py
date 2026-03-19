@@ -24,7 +24,7 @@ def hash_password(password: str) -> str:
 def verify_password(password: str, hashed: str) -> bool:
     return pwd_context.verify(password, hashed)
 
-def get_account_posts(request):
+def get_account_posts(request, username):
  with sqlite3.connect(DB_LINK, timeout=5) as con:
         cursor = con.cursor()
 
@@ -44,13 +44,18 @@ def get_account_posts(request):
         }
 
         for i in range(len(post)):
-            context["arts"].append(
-                {
-                    "price": post[i][0],
-                    "photo_url": post[i][1],
-                    "username": post[i][2]
-                }
-            )
+            if post[i][2] == username:
+                photo_url = post[i][1]
+                if photo_url.startswith("static/"):
+                    photo_url = f"../{photo_url}"
+
+                context["arts"].append(
+                    {
+                        "price": post[i][0],
+                        "photo_url": photo_url,
+                        "username": post[i][2]
+                    }
+                )
 
         return context
 
@@ -198,7 +203,7 @@ def get_basket_posts(request, username):
 
         posts = cursor.execute(
             """
-                SELECT price, link FROM basket_posts
+                SELECT basket_posts.price, basket_posts.link FROM basket_posts
                 INNER JOIN users
                 ON basket_posts.user_id = users.id
                 WHERE users.username = ?
