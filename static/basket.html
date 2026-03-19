@@ -26,7 +26,7 @@
     </div>
     <div class="content">
         <div class="header-account">
-            <a href="/account"><img src="../static/images/imag.png" alt="" style="width: 61%; padding-left: 20px"></a>
+            <p onclick="toAccount()"><img src="../static/images/imag.png" alt="" style="width: 61%; padding-left: 20px"></p>
             <div style="display: flex; gap: 20px; align-items: center;">
                 <p>username</p>
                 <a href="/account">amount art</a>
@@ -39,7 +39,7 @@
                     <a href="..." class="product"><img src="{{ item['photo_url']}}" alt="" style="border-radius: 20px"></a>
                     <div class="product-text">
                         <p style="font-family: Eden; font-size: 30px">{{ item["price"] }} $</p>
-                        <p>artist: {{ item["usermane"]}}</p>
+                        <p>artist: {{ item["author"] }}</p>
                     </div>
                     <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
                         <button>Buy</button>
@@ -77,6 +77,11 @@
             const username = localStorage.getItem("username");
             window.location.href = `/basket/${username}`
             }
+        }
+
+        async function toAccount() {
+            const username = localStorage.getItem("username");
+            window.location.href = `/account/${username}`
         }
     </script>
     </body>

@@ -159,6 +159,7 @@ def add_to_basket(data, username):
 
         price = data.price
         link = data.link
+        author = data.author
         print(link)
 
         if link.startswith("static/"):
@@ -178,14 +179,16 @@ def add_to_basket(data, username):
                     INSERT INTO basket_posts (
                         user_id,
                         price,
-                        link
+                        link,
+                        author
                     )
                     VALUES (
                         (SELECT id FROM users WHERE username = ?),
                         ?,
+                        ?,
                         ?
                     )
-                """, (username, float(price), link)
+                """, (username, float(price), link, author,)
             )
             con.commit()
 
@@ -203,7 +206,7 @@ def get_basket_posts(request, username):
 
         posts = cursor.execute(
             """
-                SELECT basket_posts.price, basket_posts.link FROM basket_posts
+                SELECT basket_posts.price, basket_posts.link, basket_posts.author FROM basket_posts
                 INNER JOIN users
                 ON basket_posts.user_id = users.id
                 WHERE users.username = ?
@@ -215,13 +218,16 @@ def get_basket_posts(request, username):
             "arts": [
             ]
         }
+        
+        print(posts)
 
         for post in posts:
             print(post)
             context["arts"].append(
                 {
                     "price": post[0],
-                    "photo_url": post[1]
+                    "photo_url": post[1],
+                    "author": post[2]
                 }
             )
 
