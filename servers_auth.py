@@ -39,6 +39,7 @@ def get_account_posts(request, username):
 
         context = {
             "request": request,
+            "username": username,
             "arts": [
             ]
         }
@@ -215,6 +216,8 @@ def get_basket_posts(request, username):
 
         context = {
             "request": request,
+            "username": username,
+            "amount_art": len(posts),
             "arts": [
             ]
         }
