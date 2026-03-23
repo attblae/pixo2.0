@@ -19,7 +19,8 @@ class Token(BaseModel):
     access_token: str
 
 
-class PostsInfo(BaseModel):
+class AccountPost(BaseModel):
+    access_token: str
     link: str
     price: str
 

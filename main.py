@@ -61,7 +61,6 @@ async def catalog_page(request: Request):
 def support_page():
     return FileResponse("static/support.html")
 
-
 @app.get("/about_us")
 def about_us_page():
     return FileResponse("static/about_us.html")
@@ -80,12 +79,10 @@ def log_in_account(data: Login):
     response = valid_login(data)
     return response
 
-
 @app.post("/create_user")
 def creating_user(data: CreatingUser):
     valid_user_creation(data)
     return {"status": "ok"}
-
 
 @app.post("/check_token")
 def check_token(data: Token):
@@ -96,6 +93,12 @@ def check_token(data: Token):
 def delete_post(data: PostInfo):
     username = check_token_time(data.access_token)
     delete_basket_post(data, username)
+    return {"status": "ok"}
+
+@app.post("/delete_from_catalog")
+def delete_post(data: AccountPost):
+    username = check_token_time(data.access_token)
+    delete_catalog_post(data, username)
     return {"status": "ok"}
 
 @app.post("/uploading")

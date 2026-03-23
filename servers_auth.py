@@ -37,6 +37,8 @@ def get_account_posts(request, username):
             """
         ).fetchall()
 
+        print(username)
+
         context = {
             "request": request,
             "username": username,
@@ -268,6 +270,45 @@ def delete_basket_post(data, username):
         pr = cursor.execute(
             """
                 SELECT * FROM basket_posts
+            """
+        ).fetchall()
+        # print(pr)
+
+def delete_catalog_post(data, username):
+    link = data.link
+    with sqlite3.connect(DB_LINK, timeout=5) as con:
+        cursor = con.cursor()
+
+        if link.startswith("../"):
+            link = link.removeprefix("../")
+
+        post_exists = cursor.execute(
+            """
+                SELECT photo_url FROM posts
+                JOIN users
+                ON posts.user_id = users.id
+                WHERE users.username = ? and posts.photo_url = ?
+            """, (username, link,)
+        ).fetchall()
+
+        print(link)
+
+        if post_exists:
+            cursor.execute(
+                """
+                DELETE FROM posts
+                WHERE photo_url = ?
+                AND user_id = (
+                    SELECT id FROM users WHERE username = ?
+                )
+                """,
+                (link, username,)
+            )
+            con.commit()
+
+        pr = cursor.execute(
+            """
+                SELECT * FROM posts
             """
         ).fetchall()
         # print(pr)
