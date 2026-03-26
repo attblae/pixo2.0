@@ -102,9 +102,9 @@ def delete_post(data: AccountPost):
     return {"status": "ok"}
 
 @app.post("/uploading")
-def upload_post(file: UploadFile = File(...), price: str = Form(...), token: str = Form(...)):
+def upload_post(file: UploadFile = File(...), price: str = Form(...), token: str = Form(...), title: str = Form(...)):
     username = check_token_time(token)
-    uploading_post(price, username, file)
+    uploading_post(price, username, file, title)
     return {"status": "ok"}
 
 if __name__ == "__main__":
