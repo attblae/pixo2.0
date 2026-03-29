@@ -52,7 +52,9 @@
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem('token', data.access_token)
-                window.location.href = "/";
+                localStorage.setItem('username', username)
+                window.location.href = `/account/${username}`;
+                console.log(data.access_token, username);
             } else {
                 const data = await response.json();
                 alert(data.message);
