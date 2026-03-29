@@ -53,8 +53,8 @@ def basket_page(request: Request, username: str):
     return templates.TemplateResponse("basket.html", context)
 
 @app.get("/catalog", response_class=HTMLResponse)
-async def catalog_page(request: Request):
-    context = get_catalog_posts(request)
+async def catalog_page(request: Request, search: str | None = None):
+    context = get_catalog_posts(request, search)
     return templates.TemplateResponse("catalog.html", context)
 
 @app.get("/support")

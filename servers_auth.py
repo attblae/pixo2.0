@@ -62,18 +62,31 @@ def get_account_posts(request, username):
 
         return context
 
-def get_catalog_posts(request):
+def get_catalog_posts(request, search):
     with sqlite3.connect(DB_LINK, timeout=5) as con:
         cursor = con.cursor()
 
-        post = cursor.execute(
-            """
-            SELECT posts.price, posts.photo_url, users.username, posts.description
-            FROM posts
-            JOIN users
-            ON posts.user_id = users.id
-            """
-        ).fetchall()
+        search = search.lower() if search else None
+
+        if search is None:
+            post = cursor.execute(
+                """
+                SELECT posts.price, posts.photo_url, users.username, posts.description
+                FROM posts
+                JOIN users
+                ON posts.user_id = users.id
+                """
+            ).fetchall()
+        else:
+            post = cursor.execute(
+                """
+                SELECT posts.price, posts.photo_url, users.username, posts.description
+                FROM posts
+                JOIN users
+                ON posts.user_id = users.id
+                WHERE lower(users.username) LIKE ? OR lower(posts.description) LIKE ?
+                """, (f"%{search}%", f"%{search}%")
+            ).fetchall()
 
         context = {
             "request": request,
@@ -161,20 +174,17 @@ def add_to_basket(data, username):
     with sqlite3.connect(DB_LINK, timeout=5) as con:
         cursor = con.cursor()
 
-        price = data.price
         link = data.link
-        author = data.author
         print(link)
 
-        if link.startswith("static/"):
-            link = f"../{link}"
+        # if link.startswith("static/"):
+        #     link = f"../{link}"
         post_exists = cursor.execute(
             """
-                SELECT link FROM basket_posts
-                JOIN users
-                ON basket_posts.user_id = users.id
-                WHERE users.username = ? and basket_posts.link = ?
-            """, (username, link,)
+                SELECT basket_posts.art_id FROM basket_posts
+                JOIN posts ON basket_posts.art_id = posts.id
+                WHERE posts.photo_url = ?
+            """, (link,)
         ).fetchall()
 
         if not post_exists:
@@ -182,18 +192,13 @@ def add_to_basket(data, username):
                 """
                     INSERT INTO basket_posts (
                         user_id,
-                        price,
-                        link,
-                        author
-                    )
+                        art_id)
                     VALUES (
                         (SELECT id FROM users WHERE username = ?),
-                        ?,
-                        ?,
-                        ?
+                        (SELECT id FROM posts WHERE photo_url = ?)
                     )
-                """, (username, float(price), link, author,)
-            )
+            """, (username, link,)
+            ).fetchall()
             con.commit()
 
         pr = cursor.execute(
@@ -210,10 +215,10 @@ def get_basket_posts(request, username):
 
         posts = cursor.execute(
             """
-                SELECT basket_posts.price, basket_posts.link, basket_posts.author FROM basket_posts
-                INNER JOIN users
-                ON basket_posts.user_id = users.id
-                WHERE users.username = ?
+                SELECT posts.price, posts.photo_url, users.username FROM posts
+                JOIN users ON posts.user_id = users.id
+                JOIN basket_posts ON basket_posts.art_id = posts.id
+                WHERE basket_posts.user_id = (SELECT id FROM users WHERE username = ?)
             """, (username,)
         ).fetchall()
 
@@ -229,6 +234,8 @@ def get_basket_posts(request, username):
 
         for post in posts:
             print(post)
+            if post[1].startswith("static/"):
+                post[1] = f"../{post[1]}"
             context["arts"].append(
                 {
                     "price": post[0],
@@ -236,7 +243,6 @@ def get_basket_posts(request, username):
                     "author": post[2]
                 }
             )
-
         return context
 
 def delete_basket_post(data, username):
@@ -246,10 +252,12 @@ def delete_basket_post(data, username):
 
         post_exists = cursor.execute(
             """
-                SELECT link FROM basket_posts
+                SELECT art_id FROM basket_posts
                 JOIN users
                 ON basket_posts.user_id = users.id
-                WHERE users.username = ? and basket_posts.link = ?
+                JOIN posts
+                ON basket_posts.art_id = posts.id
+                WHERE users.username = ? and posts.photo_url = ?
             """, (username, link,)
         ).fetchall()
 
@@ -259,21 +267,14 @@ def delete_basket_post(data, username):
             cursor.execute(
                 """
                 DELETE FROM basket_posts
-                WHERE link = ?
-                AND user_id = (
+                WHERE art_id = (
+                    SELECT id FROM posts WHERE photo_url = ?
+                ) AND user_id = (
                     SELECT id FROM users WHERE username = ?
-                )
                 """,
                 (link, username,)
             )
             con.commit()
-
-        pr = cursor.execute(
-            """
-                SELECT * FROM basket_posts
-            """
-        ).fetchall()
-        # print(pr)
 
 def delete_catalog_post(data, username):
     link = data.link
@@ -292,8 +293,6 @@ def delete_catalog_post(data, username):
             """, (username, link,)
         ).fetchall()
 
-        print(link)
-
         if post_exists:
             cursor.execute(
                 """
@@ -306,13 +305,6 @@ def delete_catalog_post(data, username):
                 (link, username,)
             )
             con.commit()
-
-        pr = cursor.execute(
-            """
-                SELECT * FROM posts
-            """
-        ).fetchall()
-        # print(pr)
 
 def uploading_post(price, username, file, title):
     with sqlite3.connect(DB_LINK, timeout=5) as con:

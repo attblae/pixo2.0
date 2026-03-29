@@ -25,7 +25,7 @@
         <a href="/">pixo</a>
         <div style="display: flex; gap: 5px; align-items: center; justify-content: center;">
             <input type="search" placeholder="Search..." id="search" style="margin-top: 5px;">
-            <button style="height: 42px;">⌕</button>
+            <button style="height: 42px;" onclick="search()">⌕</button>
         </div>
         <div class="right-part">
             <a href="/support">Support</a>
@@ -93,6 +93,13 @@
         async function toAccount() {
             const username = localStorage.getItem("username");
             window.location.href = `/account/${username}`;
+        }
+        
+        async function search() {
+            const searchInfo = document.getElementById("search").value;
+            if (!searchInfo) return;
+            const url = `/catalog?search=${encodeURIComponent(searchInfo)}`;
+            window.location.href = url;
         }
     </script>
 </body>

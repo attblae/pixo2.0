@@ -37,10 +37,9 @@ def creating_tables():
             CREATE TABLE IF NOT EXISTS basket_posts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER,
-                author VARCHAR(40),
-                price DECIMAL(11, 2) not NULL,
-                link VARCHAR(40) not NULL,
-                FOREIGN KEY (user_id) REFERENCES users (id)
+                art_id INTEGER,
+                FOREIGN KEY (user_id) REFERENCES users (id),
+                FOREIGN KEY (art_id) REFERENCES posts (id)
             )
         """
     )
