@@ -68,7 +68,7 @@ def get_catalog_posts(request):
 
         post = cursor.execute(
             """
-            SELECT posts.price, posts.photo_url, users.username
+            SELECT posts.price, posts.photo_url, users.username, posts.description
             FROM posts
             JOIN users
             ON posts.user_id = users.id
@@ -86,7 +86,8 @@ def get_catalog_posts(request):
                 {
                     "price": post[i][0],
                     "photo_url": post[i][1],
-                    "username": post[i][2]
+                    "username": post[i][2],
+                    "title": post[i][3]
                 }
             )
 
@@ -313,7 +314,7 @@ def delete_catalog_post(data, username):
         ).fetchall()
         # print(pr)
 
-def uploading_post(price, username, file):
+def uploading_post(price, username, file, title):
     with sqlite3.connect(DB_LINK, timeout=5) as con:
         cursor = con.cursor()
 
@@ -337,14 +338,16 @@ def uploading_post(price, username, file):
                     INSERT INTO posts (
                         user_id,
                         price,
-                        photo_url
+                        photo_url,
+                        description
                     )
                     VALUES (
                         (SELECT id FROM users WHERE username = ?),
                         ?,
+                        ?,
                         ?
                     )
-                """, (username, float(price), link)
+                """, (username, float(price), link, title)
             )
             con.commit()
 

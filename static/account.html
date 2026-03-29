@@ -28,7 +28,7 @@
             <ol class="products">
                 {% for item in arts %}
                 <li class="posts">
-                    <a href="..." class="product"><img src="{{ item['photo_url']}}" alt=""></a>
+                    <a href="..." class="product"><img src="{{ item['photo_url']}}" alt="" style="border-radius: 20px"></a>
                     <div class="product-text">
                         <p>{{ item['price'] }}$</p>
                         <button onclick="postDeleting(this)" data-price="{{ item['price'] }}" data-url="{{ item['photo_url']}}">Delete</button>
