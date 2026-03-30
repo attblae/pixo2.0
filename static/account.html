@@ -80,8 +80,6 @@
 
         async function postDeleting(button) {
             const token = localStorage.getItem("token");
-            const price = button.dataset.price;
-            const url = button.dataset.url;
             
             const response = await fetch("/delete_from_catalog", {
                 method: "POST",

@@ -18,6 +18,29 @@
                 background-color: #efe8de;
                 border-color: #efe8de;
             }
+
+
+
+
+            .buyingWindow {
+              display: none;
+              position: fixed;
+              z-index: 3;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              overflow: auto;
+              background-color: rgba(0, 0, 0, 0.4);
+            }
+
+            .content {
+              /* some rules */
+            }
+
+            .close {
+              /* some rules */
+            }
     </style>
 </head>
 <body class="background-blue">
@@ -44,11 +67,18 @@
                     <p>artist: {{item["username"]}}</p>
                 </div>
                 <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
-                    <button>Buy now</button>
-                    <button data-price="{{ item['price'] }}" data-url="{{ item['photo_url']}}" data-username="{{ item['username']}}" onclick="sendToBasket(this)">
+                    <button onclick="buying(this)" data-url="{{ item['photo_url']}}">Buy now</button>
+                    <button data-url="{{ item['photo_url']}}" data-username="{{ item['username']}}" onclick="sendToBasket(this)">
                         Basket
                     </button>
                 </div>
+<!--                <div class="buyingWindow" id="buyingWindow">-->
+<!--                    <div class="content">-->
+<!--                        <span class="close">×</span>-->
+<!--                        <h2>Buy right now</h2>-->
+<!--                        <p>Содержимое всплывающего окна</p>-->
+<!--                    </div>-->
+<!--                </div>-->
             </li>
             {% endfor %}
         </ol>
@@ -61,20 +91,11 @@
     <script>
         async function sendToBasket(button) {
             const token = localStorage.getItem("token");
+            const url = button.dataset.url;
 
             if (!token) {
                 window.location.href = "/login";
                }
-
-            const price = button.dataset.price;
-            const url = button.dataset.url;
-            const author = button.dataset.username;
-
-            console.log({
-                access_token: token,
-                link: url,
-                price: price
-            });
 
             const response = await fetch("/put_in_basket", {
                 method: "POST",
@@ -86,6 +107,17 @@
                     link: url
                 })
             });
+        }
+
+        async function buying(button) {
+            if (window.confirm(`BUY an art \n Is your card correct? \n 1234123412341234`)) {
+                window.alert("You have bought the art!!!")
+            } else {
+                card = window.prompt("Enter your valid card:")
+                if (card) {
+                    window.alert("You have bought the art!!!")
+                }
+            }
         }
 
         async function toAccount() {
