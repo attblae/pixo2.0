@@ -27,16 +27,13 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 def main_page():
     return FileResponse("static/main.html")
 
-
 @app.get("/create")
 def create_page():
     return FileResponse("static/create.html")
 
-
 @app.get("/login")
 def login_page():
     return FileResponse("static/login.html")
-
 
 @app.get("/account/{username}", response_class=HTMLResponse)
 async def account_page(request: Request, username: str):
@@ -64,7 +61,6 @@ def support_page():
 @app.get("/about_us")
 def about_us_page():
     return FileResponse("static/about_us.html")
-
 
 # posts:
 

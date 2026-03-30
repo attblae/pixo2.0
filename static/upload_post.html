@@ -37,6 +37,22 @@
         </div>
     </div>
     <div class="content">
+        {% for item in arts %}
+            <li class="product-wrapper">
+                <a href="..." class="product"><img src="{{ item['photo_url']}}" alt="" style="border-radius: 20px"></a>
+                <div class="product-text">
+                    <p style="font-family: Eden; font-size: 30px">{{ item["price"] }} $</p>
+                    <p style="font-family: Eden; font-size: 30px">{{ item["title"] }}</p>
+                    <p>artist: {{item["username"]}}</p>
+                </div>
+                <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
+                    <button onclick="buying(this)">Buy now</button>
+                    <button data-url="{{ item['photo_url']}}" data-username="{{ item['username']}}" onclick="sendToBasket(this)">
+                        Basket
+                    </button>
+                </div>
+            </li>
+            {% endfor %}
         <div class="input" style="margin-bottom: 3%">
             <input type="file" id="file">
             <input type="text" placeholder="Price" id="price">
@@ -80,9 +96,13 @@
             });
 
             if (response.ok) {
-                alert("You have uploaded art!")
+                if (window.confirm("Do you want to post new art?")){
+                    window.location.href = "/upload_post";
+                } else {
+                    window.location.href = "/catalog";
+                }
             } else {
-                alert("No")
+                alert("Something went wrong:(")
             }
         }
     </script>

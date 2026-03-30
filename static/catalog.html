@@ -67,7 +67,7 @@
                     <p>artist: {{item["username"]}}</p>
                 </div>
                 <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
-                    <button onclick="buying(this)" data-url="{{ item['photo_url']}}">Buy now</button>
+                    <button onclick="buying(this)">Buy now</button>
                     <button data-url="{{ item['photo_url']}}" data-username="{{ item['username']}}" onclick="sendToBasket(this)">
                         Basket
                     </button>
@@ -107,9 +107,13 @@
                     link: url
                 })
             });
+
+            if (response.ok) {
+                alert("Art is in the basket:)")
+            }
         }
 
-        async function buying(button) {
+        async function buying() {
             if (window.confirm(`BUY an art \n Is your card correct? \n 1234123412341234`)) {
                 window.alert("You have bought the art!!!")
             } else {

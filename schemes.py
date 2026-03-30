@@ -18,12 +18,6 @@ class CreatingUser(Login):
 class Token(BaseModel):
     access_token: str
 
-
-class AccountPost(BaseModel):
-    access_token: str
-    link: str
-    price: str
-
 class PostInfo(BaseModel):
     access_token: str
     link: str

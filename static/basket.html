@@ -42,8 +42,8 @@
                         <p>artist: {{ item["author"] }}</p>
                     </div>
                     <div style="display: flex; justify-content: center; margin: 20px; gap: 10px;">
-                        <button>Buy</button>
-                        <button onclick="postDeleting(this)" data-price="{{ item['price'] }}" data-author="{{ item['author'] }}" data-url="{{ item['photo_url']}}">Delete</button>
+                        <button onclick="buying()">Buy</button>
+                        <button onclick="postDeleting(this)" data-url="{{ item['photo_url']}}">Delete</button>
                     </div>
                 </li>
                 {% endfor %}
@@ -58,8 +58,6 @@
     <script>
         async function postDeleting(button) {
             const token = localStorage.getItem("token");
-            const price = button.dataset.price;
-            const author = button.dataset.author;
             const url = button.dataset.url;
 
             const response = await fetch("/delete_from_basket", {
@@ -82,6 +80,17 @@
         async function toAccount() {
             const username = localStorage.getItem("username");
             window.location.href = `/account/${username}`
+        }
+
+        async function buying() {
+            if (window.confirm(`BUY an art \n Is your card correct? \n 1234123412341234`)) {
+                window.alert("You have bought the art!!!")
+            } else {
+                card = window.prompt("Enter your valid card:")
+                if (card) {
+                    window.alert("You have bought the art!!!")
+                }
+            }
         }
     </script>
     </body>
