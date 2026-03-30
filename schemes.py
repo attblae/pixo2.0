@@ -27,5 +27,3 @@ class AccountPost(BaseModel):
 class PostInfo(BaseModel):
     access_token: str
     link: str
-    price: str
-    author: str

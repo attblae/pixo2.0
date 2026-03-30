@@ -96,7 +96,7 @@ def delete_post(data: PostInfo):
     return {"status": "ok"}
 
 @app.post("/delete_from_catalog")
-def delete_post(data: AccountPost):
+def delete_post(data: PostInfo):
     username = check_token_time(data.access_token)
     delete_catalog_post(data, username)
     return {"status": "ok"}

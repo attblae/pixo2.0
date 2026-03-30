@@ -37,7 +37,7 @@ def get_account_posts(request, username):
             """
         ).fetchall()
 
-        print(username)
+        # print(username)
 
         context = {
             "request": request,
@@ -175,7 +175,7 @@ def add_to_basket(data, username):
         cursor = con.cursor()
 
         link = data.link
-        print(link)
+        # print(link)
 
         # if link.startswith("static/"):
         #     link = f"../{link}"
@@ -206,7 +206,7 @@ def add_to_basket(data, username):
                 SELECT * FROM basket_posts
             """
         )
-        print(pr)
+        # print(pr)
 
 
 def get_basket_posts(request, username):
@@ -215,9 +215,9 @@ def get_basket_posts(request, username):
 
         posts = cursor.execute(
             """
-                SELECT posts.price, posts.photo_url, users.username FROM posts
+                SELECT posts.price, posts.photo_url, users.username FROM basket_posts
                 JOIN users ON posts.user_id = users.id
-                JOIN basket_posts ON basket_posts.art_id = posts.id
+                JOIN posts ON posts.id = basket_posts.art_id
                 WHERE basket_posts.user_id = (SELECT id FROM users WHERE username = ?)
             """, (username,)
         ).fetchall()
@@ -230,24 +230,27 @@ def get_basket_posts(request, username):
             ]
         }
         
-        print(posts)
+        # print(posts)
 
         for post in posts:
-            print(post)
-            if post[1].startswith("static/"):
-                post[1] = f"../{post[1]}"
+            path = post[1]
+            if path.startswith("static/"):
+                path = f"../{path}"
             context["arts"].append(
                 {
                     "price": post[0],
-                    "photo_url": post[1],
+                    "photo_url": path,
                     "author": post[2]
                 }
             )
         return context
 
 def delete_basket_post(data, username):
-    link = data.link
     with sqlite3.connect(DB_LINK, timeout=5) as con:
+        link = data.link
+        if link.startswith("../"):
+            link = link.removeprefix("../")
+
         cursor = con.cursor()
 
         post_exists = cursor.execute(
@@ -271,14 +274,16 @@ def delete_basket_post(data, username):
                     SELECT id FROM posts WHERE photo_url = ?
                 ) AND user_id = (
                     SELECT id FROM users WHERE username = ?
+                )
                 """,
                 (link, username,)
             )
             con.commit()
+        print(post_exists)
 
 def delete_catalog_post(data, username):
-    link = data.link
     with sqlite3.connect(DB_LINK, timeout=5) as con:
+        link = data.link
         cursor = con.cursor()
 
         if link.startswith("../"):
