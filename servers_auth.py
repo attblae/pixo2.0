@@ -317,6 +317,9 @@ def uploading_post(price, username, file, title):
 
         link = f"static/images/{file.filename}"
 
+        print(link)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
         with open(link, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 

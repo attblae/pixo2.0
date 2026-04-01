@@ -18,29 +18,6 @@
                 background-color: #efe8de;
                 border-color: #efe8de;
             }
-
-
-
-
-            .buyingWindow {
-              display: none;
-              position: fixed;
-              z-index: 3;
-              left: 0;
-              top: 0;
-              width: 100%;
-              height: 100%;
-              overflow: auto;
-              background-color: rgba(0, 0, 0, 0.4);
-            }
-
-            .content {
-              /* some rules */
-            }
-
-            .close {
-              /* some rules */
-            }
     </style>
 </head>
 <body class="background-blue">
@@ -53,14 +30,14 @@
         <div class="right-part">
             <a href="/support">Support</a>
             <a href="/about_us">About us</a>
-            <p onclick="toAccount()">Account</p>
+            <a href="#" onclick="toAccount()">Account</a>
         </div>
     </div>
     <div class="content" style="padding-top: 5%;">
         <ol class="products">
             {% for item in arts %}
             <li class="product-wrapper">
-                <a href="..." class="product"><img src="{{ item['photo_url']}}" alt="" style="border-radius: 20px"></a>
+                <img src="{{ item['photo_url']}}" alt="" style="border-radius: 20px; " class="product">
                 <div class="product-text">
                     <p style="font-family: Eden; font-size: 30px">{{ item["price"] }} $</p>
                     <p style="font-family: Eden; font-size: 30px">{{ item["title"] }}</p>
@@ -72,13 +49,6 @@
                         Basket
                     </button>
                 </div>
-<!--                <div class="buyingWindow" id="buyingWindow">-->
-<!--                    <div class="content">-->
-<!--                        <span class="close">×</span>-->
-<!--                        <h2>Buy right now</h2>-->
-<!--                        <p>Содержимое всплывающего окна</p>-->
-<!--                    </div>-->
-<!--                </div>-->
             </li>
             {% endfor %}
         </ol>

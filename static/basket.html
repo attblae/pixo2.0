@@ -26,17 +26,14 @@
     </div>
     <div class="content">
         <div class="header-account">
-            <p onclick="toAccount()"><img src="../static/images/imag.png" alt="" style="width: 61%;"></p>
-            <div style="display: flex; gap: 20px; align-items: center; justify-content: flex-end; width: 100%;">
-                <p>{{ username }}</p>
-                <p> Art amount: {{ amount_art }}</p>
+            <img src="../static/images/imag.png" alt="" style="width: 5.25%; border-radius: 20px; margin-left: 20px; cursor: pointer" onclick="toAccount()">
+            <h3>{{ username }}</h3>
+            <p> Art amount: {{ amount_art }}</p>
             </div>
-        </div>
-        <div class="content">
             <ol class="products">
                 {% for item in arts %}
                 <li class="product-wrapper">
-                    <a href="..." class="product"><img src="{{ item['photo_url']}}" alt="" style="border-radius: 20px"></a>
+                    <img src="{{ item['photo_url']}}" alt="" style="border-radius: 20px" class="product">
                     <div class="product-text">
                         <p style="font-family: Eden; font-size: 30px">{{ item["price"] }} $</p>
                         <p>artist: {{ item["author"] }}</p>
@@ -48,7 +45,6 @@
                 </li>
                 {% endfor %}
             </ol>
-        </div>
     </div>
     <div class="footer">
         <a href="/">PIXO</a>
