@@ -96,16 +96,19 @@
 }
 
 .product {
-  display: flex;
-  justify-content: center;
-  top: 0;
+    display: flex;
+    justify-content: center;
+    top: 0;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	max-width: auto;
 	height: 65%;
 	/* margin: auto; */
   /* background-color: red; */
+}
+
+.product img {
+    max-width: 1000px;
 }
 
 .product-text {
@@ -146,7 +149,7 @@
   min-width: 20%;
   /* max-width: 20%; */
   height: 350px;
-  overflow: hidden;
+  /*overflow: hidden;*/
   /*background-color: blue*/
 }
 

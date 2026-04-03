@@ -289,6 +289,8 @@ def delete_catalog_post(data, username):
         if link.startswith("../"):
             link = link.removeprefix("../")
 
+        print(link)
+
         post_exists = cursor.execute(
             """
                 SELECT photo_url FROM posts
@@ -330,6 +332,11 @@ def uploading_post(price, username, file, title):
         ).fetchall()
 
         if not post_exists:
+            if float(price) < 0:
+                raise HTTPException(detail="Price can not be lower then 0!", status_code=404)
+            if len(title) > 200:
+                raise HTTPException(detail="Title is too long", status_code=404)
+
             cursor.execute(
                 """
                     INSERT INTO posts (
