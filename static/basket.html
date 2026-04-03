@@ -22,15 +22,14 @@
             <a href="/catalog">Catalog</a>
             <a href="/support">Support</a>
             <a href="/about_us">About us</a>
+            <a href="#" onclick="toAccount()" style="color: white; text-decoration: underline; cursor: pointer">Account</a>
         </div>
     </div>
     <div class="content">
         <div class="header-account">
-            <p onclick="toAccount()"><img src="../static/images/imag.png" alt="" style="width: 61%;"></p>
-            <div style="display: flex; gap: 20px; align-items: center; justify-content: flex-end; width: 100%;">
-                <p>{{ username }}</p>
-                <p> Art amount: {{ amount_art }}</p>
-            </div>
+            <img src="../static/images/icon_account.jfif" alt="" style="width: 105px; border-radius: 20px; margin-left: 20px; cursor: pointer" onclick="toAccount()">
+            <h3>{{ username }}</h3>
+            <p> Art amount: {{ amount_art }}</p>
         </div>
         <div class="content">
             <ol class="products">
@@ -56,6 +55,25 @@
         <p>some information</p>
     </div>
     <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            window.location.href = "/login";
+        } else {
+            const response = await fetch("/check_token", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    access_token: token
+                })
+            });
+            if (!response.ok) {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+            }
+        }
+        });
         async function postDeleting(button) {
             const token = localStorage.getItem("token");
             const url = button.dataset.url;
@@ -92,6 +110,10 @@
                 }
             }
         }
+        async function toAccount() {
+                const username = localStorage.getItem("username");
+                window.location.href = `/account/${username}`
+            }
     </script>
     </body>
 </html>

@@ -34,6 +34,7 @@
             <a href="/catalog">Catalog</a>
             <a href="/support">Support</a>
             <a href="/about_us">About us</a>
+            <a href="#" onclick="toAccount()" style="color: white; text-decoration: underline; cursor: pointer">Account</a>
         </div>
     </div>
     <div class="content">
@@ -58,6 +59,25 @@
         <p>some information</p>
     </div>
     <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            window.location.href = "/login";
+        } else {
+            const response = await fetch("/check_token", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    access_token: token
+                })
+            });
+            if (!response.ok) {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+            }
+        }
+        });
         async function upload() {
             const token = localStorage.getItem("token");
             const price = document.getElementById("price").value;
