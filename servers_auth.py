@@ -174,17 +174,16 @@ def add_to_basket(data, username):
     with sqlite3.connect(DB_LINK, timeout=5) as con:
         cursor = con.cursor()
 
+        print(username)
         link = data.link
-        # print(link)
-
-        # if link.startswith("static/"):
-        #     link = f"../{link}"
+        
         post_exists = cursor.execute(
             """
                 SELECT basket_posts.art_id FROM basket_posts
                 JOIN posts ON basket_posts.art_id = posts.id
-                WHERE posts.photo_url = ?
-            """, (link,)
+                JOIN users ON basket_posts.user_id = users.id
+                WHERE posts.photo_url = ? AND users.username = ?
+            """, (link, username)
         ).fetchall()
 
         if not post_exists:
@@ -213,11 +212,13 @@ def get_basket_posts(request, username):
     with sqlite3.connect(DB_LINK, timeout=5) as con:
         cursor = con.cursor()
 
+        print(username)
+
         posts = cursor.execute(
             """
                 SELECT posts.price, posts.photo_url, users.username FROM basket_posts
-                JOIN users ON posts.user_id = users.id
-                JOIN posts ON posts.id = basket_posts.art_id
+                JOIN users ON basket_posts.user_id = users.id
+                JOIN posts ON basket_posts.art_id = posts.id
                 WHERE basket_posts.user_id = (SELECT id FROM users WHERE username = ?)
             """, (username,)
         ).fetchall()
@@ -317,6 +318,18 @@ def uploading_post(price, username, file, title):
     with sqlite3.connect(DB_LINK, timeout=5) as con:
         cursor = con.cursor()
 
+        amount_art = cursor.execute(
+            """
+                SELECT COUNT(id) FROM posts
+            """
+        ).fetchone()
+
+        print(file)
+
+        file.filename = str(amount_art[0]) + ".png"
+
+        print(file)
+
         link = f"static/images/{file.filename}"
 
         with open(link, "wb") as buffer:
@@ -332,7 +345,7 @@ def uploading_post(price, username, file, title):
         ).fetchall()
 
         if not post_exists:
-            if float(price) < 0:
+            if int(price) < 0:
                 raise HTTPException(detail="Price can not be lower then 0!", status_code=404)
             if len(title) > 200:
                 raise HTTPException(detail="Title is too long", status_code=404)

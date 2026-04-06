@@ -38,19 +38,11 @@
         </div>
     </div>
     <div class="content">
-        <div class="input" style="margin-bottom: 3%">
+        <div class="input" style="margin-top: 10%;">
             <input type="file" id="file">
             <input type="text" placeholder="Price" id="price">
             <input type="text" placeholder="Title" id="title">
             <button onclick="upload()">Upload</button>
-        </div>
-        <div class="body-post">
-            <div class="post">
-                <img src="static/images/imag.png" class="product" alt="">
-                <div class="product-text">
-                    <p>500$</p>
-                </div>
-            </div>
         </div>
     </div>
     <div class="footer">
@@ -106,7 +98,8 @@
                     window.location.href = "/catalog";
                 }
             } else {
-                alert("Something went wrong:(")
+                const data = await response.json();
+                alert(data.message);
             }
         }
     </script>

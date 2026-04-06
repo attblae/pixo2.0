@@ -26,8 +26,8 @@ def creating_tables():
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
                     price DECIMAL(11, 2) not NULL,
-                    description VARCHAR(256) NULL,
-                    photo_url VARCHAR(40) not NULL UNIQUE,
+                    description VARCHAR(20) NULL,
+                    photo_url VARCHAR(100) not NULL UNIQUE,
                     FOREIGN KEY (user_id) REFERENCES users (id)
                 );
         """

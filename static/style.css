@@ -96,23 +96,24 @@
 }
 
 .product {
-    display: flex;
-    justify-content: center;
-    top: 0;
+  display: flex;
+  justify-content: center;
+  top: 0;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	height: 65%;
+  height: 65%;
 	/* margin: auto; */
   /* background-color: red; */
 }
 
 .product img {
+    min-width: 20px;
     max-width: 1000px;
 }
 
 .product-text {
-  padding-top: 50px;
+  padding-top: 30px;
   display: flex;
   align-items: center;
   flex-direction: column;

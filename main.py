@@ -47,6 +47,7 @@ def posts_page():
 @app.get("/basket/{username}",  response_class=HTMLResponse)
 def basket_page(request: Request, username: str):
     context = get_basket_posts(request, username)
+    print(context)
     return templates.TemplateResponse("basket.html", context)
 
 @app.get("/catalog", response_class=HTMLResponse)
