@@ -6,6 +6,7 @@ from passlib.context import CryptContext
 import shutil
 import sqlite3
 import time
+import math
 from consts import *
 from schemes import *
 
@@ -230,8 +231,6 @@ def get_basket_posts(request, username):
             "arts": [
             ]
         }
-        
-        # print(posts)
 
         for post in posts:
             path = post[1]
@@ -318,17 +317,17 @@ def uploading_post(price, username, file, title):
     with sqlite3.connect(DB_LINK, timeout=5) as con:
         cursor = con.cursor()
 
+        allowed_files = ('png', 'jfif', 'jpg', 'jpeg', 'webp', 'svg', 'tiff', 'psd')
+
         amount_art = cursor.execute(
             """
                 SELECT COUNT(id) FROM posts
             """
         ).fetchone()
-
-        print(file)
-
+        if file.filename.split(".")[1] not in allowed_files:
+            raise HTTPException(detail="You can not take this file:(", status_code=404)
+        
         file.filename = str(amount_art[0]) + ".png"
-
-        print(file)
 
         link = f"static/images/{file.filename}"
 
@@ -345,10 +344,19 @@ def uploading_post(price, username, file, title):
         ).fetchall()
 
         if not post_exists:
-            if int(price) < 0:
-                raise HTTPException(detail="Price can not be lower then 0!", status_code=404)
-            if len(title) > 200:
+            if price != "".join(price.split(" ")) or title.isspace():
+                raise HTTPException(detail="No blank splace, please", status_code=404)
+            title = title.lstrip(" ")
+            title = title.rstrip(" ")
+            try: 
+                price = float(price)
+            except:
+                raise HTTPException(detail="Price is a nuber, not letters", status_code=404)
+            if price < 0 or price > 999999.99:
+                raise HTTPException(detail="Bro, you can not ask for this price", status_code=404)
+            if len(title) > 30:
                 raise HTTPException(detail="Title is too long", status_code=404)
+            price = round(price, 2)
 
             cursor.execute(
                 """

@@ -18,29 +18,6 @@
                 background-color: #efe8de;
                 border-color: #efe8de;
             }
-
-
-
-
-            .buyingWindow {
-              display: none;
-              position: fixed;
-              z-index: 3;
-              left: 0;
-              top: 0;
-              width: 100%;
-              height: 100%;
-              overflow: auto;
-              background-color: rgba(0, 0, 0, 0.4);
-            }
-
-            .content {
-              /* some rules */
-            }
-
-            .close {
-              /* some rules */
-            }
     </style>
 </head>
 <body class="background-blue">
@@ -125,7 +102,9 @@
         
         async function search() {
             const searchInfo = document.getElementById("search").value;
-            if (!searchInfo) return;
+            if (!searchInfo) {
+                window.location.href = '/catalog'
+            };
             const url = `/catalog?search=${encodeURIComponent(searchInfo)}`;
             window.location.href = url;
         }
