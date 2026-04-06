@@ -39,7 +39,10 @@
     </div>
     <div class="content">
         <div class="input" style="margin-top: 10%;">
-            <input type="file" id="file">
+            <label for="file" class="custom-file-upload">
+                Choose file
+            </label>
+            <input type="file" id="file" style="visibility:hidden;"/>
             <input type="text" placeholder="Price" id="price">
             <input type="text" placeholder="Title" id="title">
             <button onclick="upload()">Upload</button>
@@ -70,6 +73,10 @@
             }
         }
         });
+        document.getElementById('file').onchange = function(e) {
+            document.querySelector('.custom-file-upload').innerText = e.target.files[0].name || 'Choose file';
+        };
+
         async function upload() {
             const token = localStorage.getItem("token");
             const price = document.getElementById("price").value;

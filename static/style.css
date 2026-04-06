@@ -187,6 +187,28 @@
   /* background-color: blue; */
 }
 
+.custom-file-upload {
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 5px solid #aba49e;
+  background-color: #aba49e;
+  font-family: Eden;
+  font-weight: bold;
+  appearance: none;
+  width: auto;
+  border-radius: 20px;
+  color: #25302c;
+  font-size: 35px;
+  transition-duration: 0.4s;
+}
+
+.custom-file-upload:hover {
+  background-color: #d4cbb5;
+  border-color: #d4cbb5;
+}
+
+
 @font-face {
   font-family: Eden;
   src: url(fonts/EdenMeadow-Regular.woff);
@@ -239,7 +261,7 @@ button {
   background: #f1ead8;
   color: #25302c;
   font-size: 35px;
-   transition-duration: 0.4s;
+  transition-duration: 0.4s;
 }
 
 button:hover {
