@@ -38,5 +38,3 @@ def test_posts():
 #     s = cursor.execute("select * from basket_posts")
 #     from pprint import pprint
 #     pprint(s.fetchall())
-
-print(4 * 555555555555555555 + 765)
