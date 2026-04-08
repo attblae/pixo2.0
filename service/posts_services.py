@@ -3,7 +3,7 @@ from fastapi import HTTPException, UploadFile, Request
 import shutil
 from db.posts import PostRepository
 from consts import *
-from schemes.post_schemes import PostInfo
+from schemes.post_schemes import PostInfoSchema
 
 
 class PostService:
@@ -74,7 +74,7 @@ class PostService:
         return context
 
     @classmethod
-    def delete_catalog_post(cls, data: PostInfo, username: str) -> None:
+    def delete_catalog_post(cls, data: PostInfoSchema, username: str) -> None:
         """
         Метод для приведения к правильному виду ссфлок файлов перед их удалением из каталога
         :param data: PosInfo
@@ -92,7 +92,7 @@ class PostService:
             PostRepository.delete_post_from_catalog(username, link)
 
     @classmethod
-    def add_to_basket(cls, data: PostInfo, username: str) -> None:
+    def add_to_basket(cls, data: PostInfoSchema, username: str) -> None:
         """
         Метод для корректного добавления файлов в кразину
         :param data: PostInfo
@@ -137,7 +137,7 @@ class PostService:
         return context
 
     @classmethod
-    def delete_basket_post(cls, data: PostInfo, username: str) -> None:
+    def delete_basket_post(cls, data: PostInfoSchema, username: str) -> None:
         """
         Метод для приведения к правильному виду ссфлок файлов перед их удалением из карзины
         :param data: PostInfo

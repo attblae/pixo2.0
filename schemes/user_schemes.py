@@ -1,10 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-class Login(BaseModel):
+class LoginSchema(BaseModel):
     username: str
     password: str
 
-class CreatingUser(Login):
+class CreatingUserSchema(LoginSchema):
     password_confirm: str
     name: str
     surname: str
@@ -13,3 +13,6 @@ class CreatingUser(Login):
     email: str
     pasport: str
     card: str
+
+class ResponseOkSchema(BaseModel):
+    status: str = Field(default="ok")

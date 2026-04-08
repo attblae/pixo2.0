@@ -4,7 +4,8 @@ from fastapi import HTTPException
 import time
 from db.users import UserRepository
 from consts import *
-from schemes.user_schemes import Login, CreatingUser
+from schemes.user_schemes import LoginSchema, CreatingUserSchema
+from schemes.post_schemes import TokenSchema
 
 class UserService:
     @classmethod
@@ -39,7 +40,7 @@ class UserService:
         return pwd_context.verify(password, hashed)
 
     @classmethod
-    def valid_login(cls, data: Login) -> Token:
+    def valid_login(cls, data: LoginSchema) -> TokenSchema:
         """
         Метод для проверки данных при попытке полььзователя войти в существующий аккаунт
         :param data: Login
@@ -54,10 +55,10 @@ class UserService:
 
         token = UserService.create_access_token(data.username)
 
-        response = Token(access_token=token)
+        response = TokenSchema(access_token=token)
         return response
     @classmethod
-    def valid_user_creation(cls, data: CreatingUser) -> None:
+    def valid_user_creation(cls, data: CreatingUserSchema) -> None:
         """
         Метод для проверки валидости данных при создании аккаунта пользователем
         :param data: CreatingUser
