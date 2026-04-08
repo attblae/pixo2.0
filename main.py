@@ -1,14 +1,11 @@
-from fastapi import Request, FastAPI, UploadFile, File, Form
-from fastapi.staticfiles import StaticFiles
+from fastapi import Request, File, Form
 from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 import uvicorn
 from servers_auth import *
 from create_tables import *
+from service.posts_services import *
+from service.users_services import *
 from test import test_posts
-
-app = FastAPI()
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
 # errors:
 
 @app.exception_handler(HTTPException)
@@ -37,7 +34,7 @@ def login_page():
 
 @app.get("/account/{username}", response_class=HTMLResponse)
 async def account_page(request: Request, username: str):
-    context = get_account_posts(request, username)
+    context = PostService.get_account_posts(request, username)
     return templates.TemplateResponse("account.html", context)
 
 @app.get("/post")
@@ -46,13 +43,13 @@ def posts_page():
 
 @app.get("/basket/{username}",  response_class=HTMLResponse)
 def basket_page(request: Request, username: str):
-    context = get_basket_posts(request, username)
+    context = PostService.get_basket_posts(request, username)
     print(context)
     return templates.TemplateResponse("basket.html", context)
 
 @app.get("/catalog", response_class=HTMLResponse)
 async def catalog_page(request: Request, search: str | None = None):
-    context = get_catalog_posts(request, search)
+    context = PostService.get_catalog_posts(request, search)
     return templates.TemplateResponse("catalog.html", context)
 
 @app.get("/support")
@@ -67,41 +64,41 @@ def about_us_page():
 
 @app.post("/put_in_basket")
 def add_posts_to_basket(data: PostInfo):
-    username = check_token_time(data.access_token)
+    username = PostService.check_token_time(data.access_token)
     add_to_basket(data, username)
     return {"status": "ok"}
 
 @app.post("/login_account")
 def log_in_account(data: Login):
-    response = valid_login(data)
+    response = UserService.valid_login(data)
     return response
 
 @app.post("/create_user")
 def creating_user(data: CreatingUser):
-    valid_user_creation(data)
+    UserService.valid_user_creation(data)
     return {"status": "ok"}
 
 @app.post("/check_token")
 def check_token(data: Token):
-    username = check_token_time(data.access_token)
+    username = PostService.check_token_time(data.access_token)
     return {"username": username}
 
 @app.post("/delete_from_basket")
 def delete_post(data: PostInfo):
-    username = check_token_time(data.access_token)
-    delete_basket_post(data, username)
+    username = PostService.check_token_time(data.access_token)
+    PostService.delete_basket_post(data, username)
     return {"status": "ok"}
 
 @app.post("/delete_from_catalog")
 def delete_post(data: PostInfo):
-    username = check_token_time(data.access_token)
-    delete_catalog_post(data, username)
+    username = PostService.check_token_time(data.access_token)
+    PostService.delete_catalog_post(data, username)
     return {"status": "ok"}
 
 @app.post("/uploading")
 def upload_post(file: UploadFile = File(...), price: str = Form(...), token: str = Form(...), title: str = Form(...)):
-    username = check_token_time(token)
-    uploading_post(price, username, file, title)
+    username = PostService.check_token_time(token)
+    PostService.uploading_post(price, username, file, title)
     return {"status": "ok"}
 
 if __name__ == "__main__":

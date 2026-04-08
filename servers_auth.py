@@ -1,8 +1,6 @@
 from datetime import timedelta
 from jose import jwt, exceptions
 from fastapi import HTTPException
-from fastapi.templating import Jinja2Templates
-from passlib.context import CryptContext
 import shutil
 import sqlite3
 import time
@@ -11,62 +9,6 @@ from db.users import UserRepository
 from db.posts import PostRepository
 from consts import *
 from schemes import *
-
-pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
-
-templates = Jinja2Templates(directory="static")
-
-def create_access_token(subject: str, expires_delta=None) -> str:
-    expire = time.time() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)).total_seconds()
-    to_encode = {"sub": subject, "exp": expire}
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
-def verify_password(password: str, hashed: str) -> bool:
-    return pwd_context.verify(password, hashed)
-
-def valid_login(data):
-    hash_pass = UserRepository.get_password_by_username(data.username)
-    if not hash_pass:
-        raise HTTPException(detail="User does not exists", status_code=404)
-
-    if not verify_password(data.password, hash_pass):
-        raise HTTPException(detail="Invalid password", status_code=404)
-
-    token = create_access_token(data.username)
-
-    response = Token(access_token=token)
-    return response
-
-def valid_user_creation(data):
-    data_information = data.model_dump()
-    if any(" " in data_info for data_info in data_information.values()):
-        raise HTTPException(status_code=400, detail="Information contains blank space")
-
-    if data.phone.startswith("+7"):
-        data.phone = '8' + data.phone.removeprefix('+7')
-
-    username = UserRepository.check_existing_of_username(data.username)
-
-    if username:
-        raise HTTPException(detail="username is already used", status_code=404)
-
-    if data.password_confirm != data.password:
-        raise HTTPException(detail="password does not confirmed", status_code=404)
-
-    UserRepository.create_user(
-        username=data.username,
-        password=hash_password(data.password),
-        name=data.name,
-        surname = data.surname,
-        patronymic = data.patronymic,
-        phone = data.phone,
-        email = data.email,
-        pasport = data.pasport,
-        card = data.card
-    )
 
 def get_account_posts(request, username):
     post = PostRepository.get_posts_from_account()
