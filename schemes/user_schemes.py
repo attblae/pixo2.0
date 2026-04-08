@@ -13,12 +13,3 @@ class CreatingUser(Login):
     email: str
     pasport: str
     card: str
-
-
-class Token(BaseModel):
-    access_token: str
-
-
-class PostInfo(BaseModel):
-    access_token: str
-    link: str

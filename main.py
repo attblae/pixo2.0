@@ -2,11 +2,10 @@ from fastapi import Request, HTTPException, FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from create_tables import *
+from db.migrations import creating_tables
 from views.users import router as users_router
 from views.posts import router as posts_router
 from views.site import router as site_router
-from test import test_posts
 
 app = FastAPI()
 app.include_router(site_router, prefix="", tags=["site"])

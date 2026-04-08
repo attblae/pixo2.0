@@ -2,7 +2,7 @@ from fastapi import File, Form, APIRouter, Request, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 from service.posts_services import PostService
 from consts import *
-from schemes import *
+from schemes.post_schemes import PostInfo, Token
 
 
 router = APIRouter()

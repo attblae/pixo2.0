@@ -4,7 +4,7 @@ from fastapi import HTTPException
 import time
 from db.users import UserRepository
 from consts import *
-from schemes import *
+from schemes.user_schemes import Login, CreatingUser
 
 class UserService:
     @classmethod

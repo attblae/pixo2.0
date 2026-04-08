@@ -3,7 +3,7 @@ from fastapi import HTTPException, UploadFile, Request
 import shutil
 from db.posts import PostRepository
 from consts import *
-from schemes import PostInfo
+from schemes.post_schemes import PostInfo
 
 
 class PostService:

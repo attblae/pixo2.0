@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
 from service.users_services import UserService
-from schemes import Login, CreatingUser
+from schemes.user_schemes import Login, CreatingUser
 
 router = APIRouter()
 
