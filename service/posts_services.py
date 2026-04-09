@@ -24,20 +24,20 @@ class PostService:
             "arts": [
             ]
         }
+        if post:
+            for i in range(len(post)):
+                if post[i][2] == username:
+                    photo_url = post[i][1]
+                    if photo_url.startswith("static/"):
+                        photo_url = f"../{photo_url}"
 
-        for i in range(len(post)):
-            if post[i][2] == username:
-                photo_url = post[i][1]
-                if photo_url.startswith("static/"):
-                    photo_url = f"../{photo_url}"
-
-                context["arts"].append(
-                    {
-                        "price": post[i][0],
-                        "photo_url": photo_url,
-                        "username": post[i][2]
-                    }
-                )
+                    context["arts"].append(
+                        {
+                            "price": post[i][0],
+                            "photo_url": photo_url,
+                            "username": post[i][2]
+                        }
+                    )
 
         return context
 
@@ -62,15 +62,16 @@ class PostService:
             ]
         }
 
-        for i in range(len(post)):
-            context["arts"].append(
-                {
-                    "price": post[i][0],
-                    "photo_url": post[i][1],
-                    "username": post[i][2],
-                    "title": post[i][3]
-                }
-            )
+        if post:
+            for i in range(len(post)):
+                context["arts"].append(
+                    {
+                        "price": post[i][0],
+                        "photo_url": post[i][1],
+                        "username": post[i][2],
+                        "title": post[i][3]
+                    }
+                )
 
         return context
 
