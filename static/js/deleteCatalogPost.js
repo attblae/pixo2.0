@@ -1,12 +1,8 @@
-async function sendToBasket(button) {
+async function postDeleting(button) {
     const token = localStorage.getItem("token");
     const url = button.dataset.url;
-
-    if (!token) {
-        window.location.href = "/login";
-        }
-
-    const response = await fetch("/put_in_basket", {
+    
+    const response = await fetch("/delete_from_catalog", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -18,6 +14,7 @@ async function sendToBasket(button) {
     });
 
     if (response.ok) {
-        alert("Art is in the basket:)")
+    const username = localStorage.getItem("username");
+    window.location.href = `/account/${username}`
     }
 }

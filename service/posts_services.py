@@ -1,6 +1,7 @@
 from jose import jwt, exceptions
 from fastapi import HTTPException, UploadFile, Request
 import shutil
+import os
 from db.posts import PostRepository
 from consts import *
 from schemes.post_schemes import PostInfoSchema
@@ -90,6 +91,7 @@ class PostService:
 
         if post_exists:
             PostRepository.delete_post_from_catalog(username, link)
+            os.remove(link)
 
     @classmethod
     def add_to_basket(cls, data: PostInfoSchema, username: str) -> None:
@@ -156,7 +158,7 @@ class PostService:
     @classmethod
     def uploading_post(cls, price: str, username: str, file: UploadFile, title: str) -> None:
         """
-        Метод для обработки данных, которые пользователь хоччет выложить в качестве поста
+        Метод для обработки данных, которые пользователь хочет выложить в качестве поста
         :param price: str
         :param username: str
         :param file: UploadFile
@@ -166,6 +168,7 @@ class PostService:
         allowed_files = ('png', 'jfif', 'jpg', 'jpeg', 'webp', 'svg', 'tiff', 'psd')
 
         amount_art = PostRepository.count_amount_catalog_posts()
+        print(amount_art)
         if file.filename.split(".")[1] not in allowed_files:
             raise HTTPException(detail="You can not take this file:(", status_code=404)
 

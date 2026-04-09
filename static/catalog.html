@@ -59,55 +59,10 @@
         <p>89999999999</p>
         <p>some information</p>
     </div>
-    <script>
-        async function sendToBasket(button) {
-            const token = localStorage.getItem("token");
-            const url = button.dataset.url;
-
-            if (!token) {
-                window.location.href = "/login";
-               }
-
-            const response = await fetch("/put_in_basket", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    access_token: token,
-                    link: url
-                })
-            });
-
-            if (response.ok) {
-                alert("Art is in the basket:)")
-            }
-        }
-
-        async function buying() {
-            if (window.confirm(`BUY an art \n Is your card correct? \n 1234123412341234`)) {
-                window.alert("You have bought the art!!!")
-            } else {
-                card = window.prompt("Enter your valid card:")
-                if (card) {
-                    window.alert("You have bought the art!!!")
-                }
-            }
-        }
-
-        async function toAccount() {
-            const username = localStorage.getItem("username");
-            window.location.href = `/account/${username}`;
-        }
-        
-        async function search() {
-            const searchInfo = document.getElementById("search").value;
-            if (!searchInfo) {
-                window.location.href = '/catalog'
-            };
-            const url = `/catalog?search=${encodeURIComponent(searchInfo)}`;
-            window.location.href = url;
-        }
+    <script src="static/js/sendToBasket.js"></script>
+    <script src="static/js/buyPost.js"></script>
+    <script src="static/js/goToAccount.js"></script>
+    <script src="static/js/searchBar.js"></script>
     </script>
 </body>
 </html>

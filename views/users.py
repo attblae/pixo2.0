@@ -29,8 +29,7 @@ def log_in_account(data: LoginSchema):
     :param data: Login
     :return: Token
     """
-    response = UserService.valid_login(data)
-    return response
+    return UserService.valid_login(data)
 
 @router.post("/create_user", response_model=ResponseOkSchema)
 def creating_user(data: CreatingUserSchema):

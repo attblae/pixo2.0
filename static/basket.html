@@ -54,66 +54,9 @@
         <p>89999999999</p>
         <p>some information</p>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            window.location.href = "/login";
-        } else {
-            const response = await fetch("/check_token", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    access_token: token
-                })
-            });
-            if (!response.ok) {
-                localStorage.removeItem("token");
-                window.location.href = "/login";
-            }
-        }
-        });
-        async function postDeleting(button) {
-            const token = localStorage.getItem("token");
-            const url = button.dataset.url;
-
-            const response = await fetch("/delete_from_basket", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    access_token: token,
-                    link: url
-                })
-            });
-
-            if (response.ok) {
-            const username = localStorage.getItem("username");
-            window.location.href = `/basket/${username}`
-            }
-        }
-
-        async function toAccount() {
-            const username = localStorage.getItem("username");
-            window.location.href = `/account/${username}`
-        }
-
-        async function buying() {
-            if (window.confirm(`BUY an art \n Is your card correct? \n 1234123412341234`)) {
-                window.alert("You have bought the art!!!")
-            } else {
-                card = window.prompt("Enter your valid card:")
-                if (card) {
-                    window.alert("You have bought the art!!!")
-                }
-            }
-        }
-        async function toAccount() {
-                const username = localStorage.getItem("username");
-                window.location.href = `/account/${username}`
-            }
-    </script>
+    <script src="../static/js/checkToken.js"></script>
+    <script src="../static/js/deleteBasketPost.js"></script>
+    <script src="../static/js/goToAccount.js"></script>
+    <script src="../static/js/buyPost.js"></script>
     </body>
 </html>
