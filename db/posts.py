@@ -1,6 +1,7 @@
 import sqlite3
 from consts import DB_LINK
 
+
 class PostRepository:
     @classmethod
     def get_posts_from_account(cls):
@@ -12,14 +13,12 @@ class PostRepository:
         with sqlite3.connect(DB_LINK, timeout=5) as con:
             cursor = con.cursor()
 
-            post = cursor.execute(
-                """
+            post = cursor.execute("""
                 SELECT posts.price, posts.photo_url, users.username
                 FROM posts
                 JOIN users
                 ON posts.user_id = users.id
-                """
-            ).fetchall()
+                """).fetchall()
 
         return post if post else None
 
@@ -31,14 +30,12 @@ class PostRepository:
         """
         with sqlite3.connect(DB_LINK, timeout=5) as con:
             cursor = con.cursor()
-            post = cursor.execute(
-                """
+            post = cursor.execute("""
                 SELECT posts.price, posts.photo_url, users.username, posts.description
                 FROM posts
                 JOIN users
                 ON posts.user_id = users.id
-                """
-            ).fetchall()
+                """).fetchall()
 
         return post if post else None
 
@@ -58,7 +55,8 @@ class PostRepository:
                 JOIN users
                 ON posts.user_id = users.id
                 WHERE lower(users.username) LIKE ? OR lower(posts.description) LIKE ?
-                """, (f"%{search}%", f"%{search}%")
+                """,
+                (f"%{search}%", f"%{search}%"),
             ).fetchall()
 
         return post if post else None
@@ -79,7 +77,8 @@ class PostRepository:
                     JOIN posts ON basket_posts.art_id = posts.id
                     JOIN users ON basket_posts.user_id = users.id
                     WHERE posts.photo_url = ? AND users.username = ?
-                """, (link, username)
+                """,
+                (link, username),
             ).fetchall()
 
         return post_exists if post_exists else None
@@ -103,7 +102,11 @@ class PostRepository:
                         (SELECT id FROM users WHERE username = ?),
                         (SELECT id FROM posts WHERE photo_url = ?)
                     )
-            """, (username, link,)
+            """,
+                (
+                    username,
+                    link,
+                ),
             ).fetchall()
             con.commit()
 
@@ -123,7 +126,8 @@ class PostRepository:
                     JOIN users ON basket_posts.user_id = users.id
                     JOIN posts ON basket_posts.art_id = posts.id
                     WHERE basket_posts.user_id = (SELECT id FROM users WHERE username = ?)
-                """, (username,)
+                """,
+                (username,),
             ).fetchall()
 
         return posts
@@ -147,7 +151,10 @@ class PostRepository:
                     SELECT id FROM users WHERE username = ?
                 )
                 """,
-                (link, username,)
+                (
+                    link,
+                    username,
+                ),
             )
             con.commit()
 
@@ -168,7 +175,11 @@ class PostRepository:
                     JOIN users
                     ON posts.user_id = users.id
                     WHERE users.username = ? and posts.photo_url = ?
-                """, (username, link,)
+                """,
+                (
+                    username,
+                    link,
+                ),
             ).fetchall()
 
         return post_exists if post_exists else None
@@ -191,7 +202,10 @@ class PostRepository:
                     SELECT id FROM users WHERE username = ?
                 )
                 """,
-                (link, username,)
+                (
+                    link,
+                    username,
+                ),
             )
             con.commit()
 
@@ -203,16 +217,14 @@ class PostRepository:
         """
         with sqlite3.connect(DB_LINK, timeout=5) as con:
             cursor = con.cursor()
-            amount_art = cursor.execute(
-                """
+            amount_art = cursor.execute("""
                     SELECT COUNT(id) FROM posts
-                """
-            ).fetchone()
+                """).fetchone()
 
         return amount_art[0]
 
     @classmethod
-    def create_post(cls, username: str, price: float, link: str, title:  str):
+    def create_post(cls, username: str, price: float, link: str, title: str):
         """
         Метод созданния поста в каталоге
         :param username: str
@@ -237,6 +249,7 @@ class PostRepository:
                         ?,
                         ?
                     )
-                """, (username, float(price), link, title)
+                """,
+                (username, float(price), link, title),
             )
             con.commit()

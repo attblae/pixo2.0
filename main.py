@@ -13,24 +13,18 @@ app.include_router(users_router, prefix="", tags=["users"])
 app.include_router(posts_router, prefix="", tags=["posts"])
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
         status_code=exc.status_code,
-        content={
-            "message": exc.detail,
-            "status_code": exc.status_code
-        }
+        content={"message": exc.detail, "status_code": exc.status_code},
     )
+
 
 if __name__ == "__main__":
     # 127.0.0.1
     # 0.0.0.0
     creating_tables()
     # test_posts()
-    uvicorn.run(
-        "main:app",
-        host="127.0.0.1",
-        port=8657,
-        reload=True
-    )
+    uvicorn.run("main:app", host="127.0.0.1", port=8657, reload=True)

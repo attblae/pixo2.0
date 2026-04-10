@@ -7,6 +7,7 @@ from consts import *
 from schemes.user_schemes import LoginSchema, CreatingUserSchema
 from schemes.post_schemes import TokenSchema
 
+
 class UserService:
     @classmethod
     def create_access_token(cls, subject: str, expires_delta=None) -> str:
@@ -16,7 +17,12 @@ class UserService:
         :param expires_delta: None
         :return: str
         """
-        expire = time.time() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)).total_seconds()
+        expire = (
+            time.time()
+            + (
+                expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            ).total_seconds()
+        )
         to_encode = {"sub": subject, "exp": expire}
         return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -57,6 +63,7 @@ class UserService:
 
         response = TokenSchema(access_token=token)
         return response
+
     @classmethod
     def valid_user_creation(cls, data: CreatingUserSchema) -> None:
         """
@@ -66,10 +73,12 @@ class UserService:
         """
         data_information = data.model_dump()
         if any(" " in data_info for data_info in data_information.values()):
-            raise HTTPException(status_code=400, detail="Information contains blank space")
+            raise HTTPException(
+                status_code=400, detail="Information contains blank space"
+            )
 
         if data.phone.startswith("+7"):
-            data.phone = '8' + data.phone.removeprefix('+7')
+            data.phone = "8" + data.phone.removeprefix("+7")
 
         username = UserRepository.check_existing_of_username(data.username)
 
@@ -83,10 +92,10 @@ class UserService:
             username=data.username,
             password=UserService.hash_password(data.password),
             name=data.name,
-            surname = data.surname,
-            patronymic = data.patronymic,
-            phone = data.phone,
-            email = data.email,
-            pasport = data.pasport,
-            card = data.card
+            surname=data.surname,
+            patronymic=data.patronymic,
+            phone=data.phone,
+            email=data.email,
+            pasport=data.pasport,
+            card=data.card,
         )

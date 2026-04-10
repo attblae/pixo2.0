@@ -5,19 +5,24 @@ from consts import *
 from schemes.post_schemes import ResponseUsernameSchema, TokenSchema, PostInfoSchema
 from schemes.user_schemes import ResponseOkSchema
 
-
 router = APIRouter()
 
-@router.get("/account/{username}", response_class=HTMLResponse)
-async def account_page(request: Request, username: str):
+
+@router.get("/account/{username}/{token}", response_class=HTMLResponse)
+async def account_page(request: Request, username: str, token: str):
     """
     Модель для перехода на аккаунт конкретного пользователя
     :param request: Request
     :param username: username
+    :param token: str
     :return: context
     """
-    context = PostService.get_account_posts(request, username)
-    return templates.TemplateResponse("account.html", context)
+    context = PostService.get_account_posts(request, username, token)
+    if isinstance(context, dict):
+        return templates.TemplateResponse("account.html", context)
+
+    return context
+
 
 @router.get("/post")
 def posts_page():
@@ -27,16 +32,19 @@ def posts_page():
     """
     return FileResponse("static/upload_post.html")
 
-@router.get("/basket/{username}",  response_class=HTMLResponse)
-def basket_page(request: Request, username: str):
+
+@router.get("/basket/{username}/{token}", response_class=HTMLResponse)
+def basket_page(request: Request, username: str, token: str):
     """
     Модель для перехода к карзине опреденного пользователя
     :param request: Request
     :param username: str
+    :param token: str
     :return: context
     """
-    context = PostService.get_basket_posts(request, username)
+    context = PostService.get_basket_posts(request, username, token)
     return templates.TemplateResponse("basket.html", context)
+
 
 @router.get("/catalog", response_class=HTMLResponse)
 async def catalog_page(request: Request, search: str | None = None):
@@ -49,6 +57,7 @@ async def catalog_page(request: Request, search: str | None = None):
     context = PostService.get_catalog_posts(request, search)
     return templates.TemplateResponse("catalog.html", context)
 
+
 @router.post("/put_in_basket")
 def add_posts_to_basket(data: PostInfoSchema):
     """
@@ -60,6 +69,7 @@ def add_posts_to_basket(data: PostInfoSchema):
     PostService.add_to_basket(data, username)
     return ResponseOkSchema()
 
+
 @router.post("/check_token")
 def check_token(data: TokenSchema):
     """
@@ -70,8 +80,9 @@ def check_token(data: TokenSchema):
     username = PostService.check_token_time(data.access_token)
     return ResponseUsernameSchema(username=username).model_dump()
 
+
 @router.post("/delete_from_basket")
-def delete_post(data: PostInfoSchema):
+def delete_basket_post(data: PostInfoSchema):
     """
     Модель для удаления поста из карзины определенного пользователя
     :param data: PostInfoSchema
@@ -81,8 +92,9 @@ def delete_post(data: PostInfoSchema):
     PostService.delete_basket_post(data, username)
     return ResponseOkSchema()
 
+
 @router.post("/delete_from_catalog")
-def delete_post(data: PostInfoSchema):
+def delete_catalog_post(data: PostInfoSchema):
     """
     Модель для удалдения поста из каталога и аккаунта у определенного пользователя
     :param data: PostInfoSchema
@@ -92,8 +104,14 @@ def delete_post(data: PostInfoSchema):
     PostService.delete_catalog_post(data, username)
     return ResponseOkSchema()
 
+
 @router.post("/uploading")
-def upload_post(file: UploadFile = File(...), price: str = Form(...), token: str = Form(...), title: str = Form(...)):
+def upload_post(
+    file: UploadFile = File(...),
+    price: str = Form(...),
+    token: str = Form(...),
+    title: str = Form(...),
+):
     """
     Модель для создания поста с верными данными
     :param file: UploadFile

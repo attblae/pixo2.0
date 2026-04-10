@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class TokenSchema(BaseModel):
     access_token: str
 
@@ -7,6 +8,7 @@ class TokenSchema(BaseModel):
 class PostInfoSchema(BaseModel):
     access_token: str
     link: str
+
 
 class ResponseUsernameSchema(BaseModel):
     username: str

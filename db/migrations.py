@@ -1,11 +1,11 @@
 import sqlite3
 from consts import DB_LINK
 
+
 def creating_tables():
     con = sqlite3.connect(DB_LINK)
     cursor = con.cursor()
-    cursor.execute(
-            """
+    cursor.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username VARCHAR(30) UNIQUE,
@@ -18,10 +18,8 @@ def creating_tables():
                     pasport VARCHAR(16) UNIQUE,
                     card VARCHAR(19) UNIQUE
                 );
-        """
-    )
-    cursor.execute(
-        """
+        """)
+    cursor.execute("""
             CREATE TABLE IF NOT EXISTS posts (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
@@ -30,10 +28,8 @@ def creating_tables():
                     photo_url VARCHAR(100) not NULL UNIQUE,
                     FOREIGN KEY (user_id) REFERENCES users (id)
                 );
-        """
-    )
-    cursor.execute(
-        """
+        """)
+    cursor.execute("""
             CREATE TABLE IF NOT EXISTS basket_posts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER,
@@ -41,5 +37,4 @@ def creating_tables():
                 FOREIGN KEY (user_id) REFERENCES users (id),
                 FOREIGN KEY (art_id) REFERENCES posts (id)
             )
-        """
-    )
+        """)

@@ -1,8 +1,10 @@
 from pydantic import BaseModel, Field
 
+
 class LoginSchema(BaseModel):
     username: str
     password: str
+
 
 class CreatingUserSchema(LoginSchema):
     password_confirm: str
@@ -13,6 +15,7 @@ class CreatingUserSchema(LoginSchema):
     email: str
     pasport: str
     card: str
+
 
 class ResponseOkSchema(BaseModel):
     status: str = Field(default="ok")

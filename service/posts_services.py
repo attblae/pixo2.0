@@ -1,5 +1,6 @@
 from jose import jwt, exceptions
 from fastapi import HTTPException, UploadFile, Request
+from fastapi.responses import RedirectResponse
 import shutil
 import os
 from db.posts import PostRepository
@@ -9,33 +10,38 @@ from schemes.post_schemes import PostInfoSchema
 
 class PostService:
     @classmethod
-    def get_account_posts(cls, request: Request, username: str) -> dict:
+    def get_account_posts(
+        cls, request: Request, username: str, token: str
+    ) -> dict | RedirectResponse:
         """
         Метод для отображения данных поста в аккаунте пользователя
         :param request: Request
         :param username: str
-        :return: dict
+        :return: dict | RedirectResponse
         """
+        try:
+            username_from_token = PostService.check_token_time(token)
+        except Exception:
+            return RedirectResponse("/login")
+
+        if username_from_token != username:
+            raise HTTPException(detail="Username is not valid", status_code=404)
+
         post = PostRepository.get_posts_from_account()
 
-        context = {
-            "request": request,
-            "username": username,
-            "arts": [
-            ]
-        }
+        context = {"request": request, "username": username, "arts": []}
         if post:
             for i in range(len(post)):
                 if post[i][2] == username:
                     photo_url = post[i][1]
                     if photo_url.startswith("static/"):
-                        photo_url = f"../{photo_url}"
+                        photo_url = f"../../{photo_url}"
 
                     context["arts"].append(
                         {
                             "price": post[i][0],
                             "photo_url": photo_url,
-                            "username": post[i][2]
+                            "username": post[i][2],
                         }
                     )
 
@@ -56,11 +62,7 @@ class PostService:
         else:
             post = PostRepository.get_specific_catalog_posts(search)
 
-        context = {
-            "request": request,
-            "arts": [
-            ]
-        }
+        context = {"request": request, "arts": []}
 
         if post:
             for i in range(len(post)):
@@ -69,7 +71,7 @@ class PostService:
                         "price": post[i][0],
                         "photo_url": post[i][1],
                         "username": post[i][2],
-                        "title": post[i][3]
+                        "title": post[i][3],
                     }
                 )
 
@@ -85,8 +87,8 @@ class PostService:
         """
         link = data.link
 
-        if link.startswith("../"):
-            link = link.removeprefix("../")
+        if link.startswith("../../"):
+            link = link.removeprefix("../../")
 
         post_exists = PostRepository.check_post_exists_in_catalog(username, link)
 
@@ -110,32 +112,37 @@ class PostService:
             PostRepository.put_post_in_basket(username, link)
 
     @classmethod
-    def get_basket_posts(cls, request: Request, username: str) -> dict:
+    def get_basket_posts(
+        cls, request: Request, username: str, token: str
+    ) -> dict | RedirectResponse:
         """
         Метод для вывода всех данных поста в карзие пользователя
         :param request: Request
         :param username: str
-        :return: dict
+        :return: dict | RedirectResponse
         """
+        try:
+            username_from_token = PostService.check_token_time(token)
+        except Exception:
+            return RedirectResponse("/login")
+
+        if username_from_token != username:
+            raise HTTPException(detail="Username is not valid", status_code=404)
+
         posts = PostRepository.get_posts_from_basket(username)
         context = {
             "request": request,
             "username": username,
             "amount_art": len(posts),
-            "arts": [
-            ]
+            "arts": [],
         }
 
         for post in posts:
             path = post[1]
             if path.startswith("static/"):
-                path = f"../{path}"
+                path = f"../../{path}"
             context["arts"].append(
-                {
-                    "price": post[0],
-                    "photo_url": path,
-                    "author": post[2]
-                }
+                {"price": post[0], "photo_url": path, "author": post[2]}
             )
         return context
 
@@ -148,8 +155,8 @@ class PostService:
         :return: None
         """
         link = data.link
-        if link.startswith("../"):
-            link = link.removeprefix("../")
+        if link.startswith("../../"):
+            link = link.removeprefix("../../")
 
         post_exists = PostRepository.check_post_in_basket(username, link)
 
@@ -157,7 +164,9 @@ class PostService:
             PostRepository.delete_post_from_basket(username, link)
 
     @classmethod
-    def uploading_post(cls, price: str, username: str, file: UploadFile, title: str) -> None:
+    def uploading_post(
+        cls, price: str, username: str, file: UploadFile, title: str
+    ) -> None:
         """
         Метод для обработки данных, которые пользователь хочет выложить в качестве поста
         :param price: str
@@ -166,7 +175,7 @@ class PostService:
         :param title: str
         :return: None
         """
-        allowed_files = ('png', 'jfif', 'jpg', 'jpeg', 'webp', 'svg', 'tiff', 'psd')
+        allowed_files = ("png", "jfif", "jpg", "jpeg", "webp", "svg", "tiff", "psd")
 
         amount_art = PostRepository.count_amount_catalog_posts()
         print(amount_art)
@@ -190,14 +199,20 @@ class PostService:
             try:
                 price = float(price)
             except:
-                raise HTTPException(detail="Price is a number, not letters", status_code=404)
+                raise HTTPException(
+                    detail="Price is a number, not letters", status_code=404
+                )
             if price < 0 or price > 999999.99:
-                raise HTTPException(detail="Bro, you can not ask for this price", status_code=404)
+                raise HTTPException(
+                    detail="Bro, you can not ask for this price", status_code=404
+                )
             if len(title) > 30:
                 raise HTTPException(detail="Title is too long", status_code=404)
             price = round(price, 2)
 
-            PostRepository.create_post(username=username, price=price, link=link, title=title)
+            PostRepository.create_post(
+                username=username, price=price, link=link, title=title
+            )
 
     @classmethod
     def check_token_time(cls, data: str) -> str:
@@ -209,7 +224,7 @@ class PostService:
         try:
             payload = jwt.decode(data, SECRET_KEY, algorithms=[ALGORITHM])
         except exceptions.ExpiredSignatureError:
-            raise HTTPException(detail="Token expired", status_code=404)
+            raise HTTPException(detail="Token expired", status_code=403)
         username = payload["sub"]
 
         return username

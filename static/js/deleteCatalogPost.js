@@ -15,6 +15,7 @@ async function postDeleting(button) {
 
     if (response.ok) {
     const username = localStorage.getItem("username");
-    window.location.href = `/account/${username}`
+    const token = localStorage.getItem("token")
+    window.location.href = `/account/${username}/${token}`
     }
 }

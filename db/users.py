@@ -1,6 +1,7 @@
 import sqlite3
 from consts import DB_LINK
 
+
 class UserRepository:
     @classmethod
     def get_password_by_username(cls, username: str) -> str | None:
@@ -12,8 +13,7 @@ class UserRepository:
         with sqlite3.connect(DB_LINK, timeout=5) as con:
             cursor = con.cursor()
             hash_pass = cursor.execute(
-                "SELECT password FROM users WHERE username = ?",
-                (username,)
+                "SELECT password FROM users WHERE username = ?", (username,)
             ).fetchone()
 
         return hash_pass[0] if hash_pass else None
@@ -28,24 +28,23 @@ class UserRepository:
         with sqlite3.connect(DB_LINK, timeout=5) as con:
             cursor = con.cursor()
             username = cursor.execute(
-                "SELECT username FROM users WHERE username = ?",
-                (username,)
+                "SELECT username FROM users WHERE username = ?", (username,)
             ).fetchone()
 
         return username[0] if username else None
 
     @classmethod
     def create_user(
-            cls,
-            username: str,
-            password: str,
-            name: str,
-            surname: str,
-            patronymic: str,
-            phone: str,
-            email: str,
-            pasport: str,
-            card: str
+        cls,
+        username: str,
+        password: str,
+        name: str,
+        surname: str,
+        patronymic: str,
+        phone: str,
+        email: str,
+        pasport: str,
+        card: str,
     ):
         """
         Метод для создания пользователя и добавления всех его данных в таблицу users
@@ -86,7 +85,7 @@ class UserRepository:
                     phone,
                     email,
                     pasport,
-                    card
-                )
+                    card,
+                ),
             )
             con.commit()

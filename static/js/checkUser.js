@@ -13,7 +13,7 @@ async function check_user() {
         const data = await response.json();
         localStorage.setItem('token', data.access_token)
         localStorage.setItem('username', username)
-        window.location.href = `/account/${username}`;
+        window.location.href = `/account/${username}/${data.access_token}`;
         console.log(data.access_token, username);
     } else {
         const data = await response.json();

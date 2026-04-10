@@ -6,6 +6,7 @@ from schemes.post_schemes import TokenSchema
 
 router = APIRouter()
 
+
 @router.get("/create")
 def create_page():
     """
@@ -13,6 +14,7 @@ def create_page():
     :return: FileResponse
     """
     return FileResponse("static/create.html")
+
 
 @router.get("/login")
 def login_page():
@@ -22,6 +24,7 @@ def login_page():
     """
     return FileResponse("static/login.html")
 
+
 @router.post("/login_account", response_model=TokenSchema)
 def log_in_account(data: LoginSchema):
     """
@@ -30,6 +33,7 @@ def log_in_account(data: LoginSchema):
     :return: Token
     """
     return UserService.valid_login(data)
+
 
 @router.post("/create_user", response_model=ResponseOkSchema)
 def creating_user(data: CreatingUserSchema):
