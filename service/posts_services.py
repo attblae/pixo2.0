@@ -25,7 +25,7 @@ class PostService:
             return RedirectResponse("/login")
 
         if username_from_token != username:
-            raise HTTPException(detail="Username is not valid", status_code=404)
+            return RedirectResponse(f"/account/{username_from_token}/{token}")
 
         post = PostRepository.get_posts_from_account()
 
@@ -119,6 +119,7 @@ class PostService:
         Метод для вывода всех данных поста в карзие пользователя
         :param request: Request
         :param username: str
+        :param token: str
         :return: dict | RedirectResponse
         """
         try:
@@ -127,7 +128,7 @@ class PostService:
             return RedirectResponse("/login")
 
         if username_from_token != username:
-            raise HTTPException(detail="Username is not valid", status_code=404)
+            return RedirectResponse(f"/basket/{username_from_token}/{token}")
 
         posts = PostRepository.get_posts_from_basket(username)
         context = {

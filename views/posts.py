@@ -43,7 +43,10 @@ def basket_page(request: Request, username: str, token: str):
     :return: context
     """
     context = PostService.get_basket_posts(request, username, token)
-    return templates.TemplateResponse("basket.html", context)
+    if isinstance(context, dict):
+        return templates.TemplateResponse("basket.html", context)
+
+    return context
 
 
 @router.get("/catalog", response_class=HTMLResponse)
