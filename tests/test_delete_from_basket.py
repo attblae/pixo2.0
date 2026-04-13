@@ -1,5 +1,7 @@
 import unittest
+import sqlite3
 
+from consts import DB_LINK
 from schemes.post_schemes import PostInfoSchema
 from service.posts_services import PostService
 from service.users_services import UserService
@@ -14,5 +16,101 @@ class TestDeleteBasketPost(unittest.TestCase):
             link="static/images/0.png"
         )
 
+        with sqlite3.connect(DB_LINK, timeout=5) as con:
+            cursor = con.cursor()
+
+            user_exists = cursor.execute(
+                """
+                    SELECT username, password FROM users
+                    WHERE username = "example_name" AND password = "123456"
+                """
+            )
+
+            if not user_exists:
+                cursor.execute(
+                    """
+                        INSERT INTO users (
+                        username, 
+                        password, 
+                        name, 
+                        surname, 
+                        patronymic,
+                        phone, 
+                        email, 
+                        pasport,
+                        card
+                        )
+                        VALUES (
+                        "example_name",
+                        "123456",
+                        "User",
+                        "User",
+                        "User",
+                        "8900000000",
+                        "example@gmal.com",
+                        "123456890",
+                        "1234123412341234"
+                        )
+                """,
+                )
+
+            post_exists = cursor.execute(
+                """
+                    SELECT id FROM posts
+                    WHERE photo_url = "static/images/0.png"
+                """
+            )
+
+            if not post_exists:
+                cursor.execute(
+                    """
+                        INSERT INTO posts (
+                            user_id,
+                            price,
+                            photo_url,
+                            description
+                        )
+                        VALUES (
+                            (SELECT id FROM users WHERE username = "example_name"),
+                            "20",
+                            "static/images/0.png",
+                            "something"
+                        )
+                    """
+                )
+                con.commit()
+
+            basket_post_exists = cursor.execute(
+                """
+                    SELECT user_id, art_id FROM basket_posts
+                    WHERE user_id = (SELECT id FROM users WHERE username = "example_name") AND art_id = (SELECT id FROM posts WHERE photo_url = "static/images/0.png")
+                """
+            )
+
+            if not basket_post_exists:
+                cursor.execute(
+                    """
+                        INSERT INTO basket_posts (
+                            user_id,
+                            art_id
+                        )
+                        VALUES (
+                            (SELECT id FROM users WHERE username = "example_name"),
+                            (SELECT id FROM posts WHERE photo_url = "static/images/0.png")
+                        )
+                    """
+                )
+                con.commit()
+
+
     def test_delete_basket_post(self):
-        self.assertEqual(PostService.delete_basket_post(self.data, username="example_name"), None)
+        with sqlite3.connect(DB_LINK, timeout=5) as con:
+            cursor = con.cursor()
+            self.assertEqual(PostService.delete_basket_post(self.data, username="example_name"), None)
+            post = cursor.execute(
+                """
+                     SELECT id FROM basket_posts
+                     WHERE art_id = (SELECT id FROM posts WHERE photo_url = "static/images/0.png")
+                """
+            ).fetchone()
+            self.assertIsNone(post)
