@@ -16,15 +16,6 @@ class TestUploadPost(unittest.TestCase):
                 filename="0.png",
                 file=io.BytesIO(f.read())
             )
-        # with sqlite3.connect(DB_LINK, timeout=5) as con:
-        #     cursor = con.cursor()
-        #
-        #     post_exists = cursor.execute(
-        #         """
-        #             SELECT id FROM posts
-        #             WHERE
-        #         """
-        #     )
 
     def test_some(self):
         print(self.file)

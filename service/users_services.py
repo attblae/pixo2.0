@@ -1,7 +1,12 @@
 from datetime import timedelta
+from itertools import count
+
 from jose import jwt
 from fastapi import HTTPException
 import time
+
+from pydantic.networks import pretty_email_regex
+
 from db.users import UserRepository
 from consts import *
 from schemes.user_schemes import LoginSchema, CreatingUserSchema
@@ -80,13 +85,32 @@ class UserService:
         if data.phone.startswith("+7"):
             data.phone = "8" + data.phone.removeprefix("+7")
 
+        print(data.email.count("@"), "@")
+
+        if not data.email.endswith(email):
+            raise HTTPException(detail="Email is not valid", status_code=404)
+
+        if data.email.count("@") != 1:
+            raise HTTPException(detail="Email is not valid", status_code=404)
+
         username = UserRepository.check_existing_of_username(data.username)
 
         if username:
             raise HTTPException(detail="username is already used", status_code=404)
 
+        if data.username in bad_words:
+            raise HTTPException(detail="You can not name yourself like this", status_code=404)
+
+        if data.password in easy_passwords:
+            raise HTTPException(detail="Your password is too simple", status_code=404)
+
+        for i in data.password:
+            if data.password.count(i) == len(data.password):
+                raise HTTPException(detail="Your password is too simple", status_code=404)
+
         if data.password_confirm != data.password:
             raise HTTPException(detail="password does not confirmed", status_code=404)
+
 
         UserRepository.create_user(
             username=data.username,

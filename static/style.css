@@ -208,6 +208,14 @@
   border-color: #d4cbb5;
 }
 
+.custom-icon-upload {
+  display: inline-block;
+  cursor: pointer;
+  appearance: none;
+  width: auto;
+  transition-duration: 0.4s;
+}
+
 
 @font-face {
   font-family: Eden;

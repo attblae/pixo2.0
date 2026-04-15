@@ -176,7 +176,6 @@ class PostService:
         :param title: str
         :return: None
         """
-        allowed_files = ("png", "jfif", "jpg", "jpeg", "webp", "svg", "tiff", "psd")
 
         amount_art = PostRepository.count_amount_catalog_posts()
 
