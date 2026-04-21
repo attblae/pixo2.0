@@ -5,9 +5,7 @@ import os
 
 from fastapi import UploadFile
 from consts import DB_LINK
-from schemes.post_schemes import PostInfoSchema
 from service.posts_services import PostService
-from service.users_services import UserService
 
 class TestUploadPost(unittest.TestCase):
     def setUp(self):
@@ -19,7 +17,7 @@ class TestUploadPost(unittest.TestCase):
 
         self.price = "250.75"
         self.username = "test_user"
-        self.title = "Test Artwork"
+        self.title = "Test"
 
         with sqlite3.connect(DB_LINK, timeout=5) as con:
             cursor = con.cursor()
@@ -36,16 +34,29 @@ class TestUploadPost(unittest.TestCase):
                 cursor.execute(
                     """
                     INSERT INTO users (
-                        username, password, name, surname, patronymic,
-                        phone, email, pasport, card
+                        username, 
+                        password, 
+                        name, 
+                        surname,
+                        patronymic,
+                        phone, 
+                        email, 
+                        pasport, 
+                        card
                     ) VALUES (
                         ?, ?, ?, ?, ?, ?, ?, ?, ?
                     )
                     """,
                     (
-                        self.username, "123456", "Test", "User", "Testovich",
-                        "8900000000", "test@gmail.com", "123456890",
-                        "1234123412341234"
+                        self.username,
+                        "123456",
+                        "Test",
+                        "User",
+                        "Test",
+                        "8900000001",
+                        "test@gmail.com",
+                        "123456892",
+                        "1234123412341235"
                     )
                 )
                 con.commit()
@@ -54,7 +65,7 @@ class TestUploadPost(unittest.TestCase):
         with sqlite3.connect(DB_LINK, timeout=5) as con:
             cursor = con.cursor()
             posts_before = cursor.execute(
-                "SELECT COUNT(*) FROM posts WHERE username = ?",
+                "SELECT COUNT(*) FROM posts WHERE user_id = (SELECT id FROM users WHERE username = ?)",
                 (self.username,)
             ).fetchone()[0]
 
@@ -68,17 +79,19 @@ class TestUploadPost(unittest.TestCase):
         with sqlite3.connect(DB_LINK, timeout=5) as con:
             cursor = con.cursor()
             posts_after = cursor.execute(
-                "SELECT COUNT(*) FROM posts WHERE username = ?",
+                "SELECT COUNT(*) FROM posts WHERE user_id = (SELECT id FROM users WHERE username = ?)",
                 (self.username,)
             ).fetchone()[0]
             self.assertEqual(posts_after, posts_before + 1)
 
             new_post = cursor.execute(
                 """
-                SELECT price, photo_url, title, username
+                SELECT posts.price, posts.photo_url, posts.description, users.username
                 FROM posts
-                WHERE username = ?
-                ORDER BY id DESC
+                JOIN users
+                ON posts.user_id = users.id
+                WHERE users.username = ?
+                ORDER BY posts.id DESC
                 LIMIT 1
                 """,
                 (self.username,)
@@ -87,7 +100,7 @@ class TestUploadPost(unittest.TestCase):
             self.assertIsNotNone(new_post)
             self.assertEqual(float(new_post[0]), 250.75)
             self.assertTrue(new_post[1].startswith("static/images/"))
-            self.assertEqual(new_post[2], "Test Artwork")
+            self.assertEqual(new_post[2], "Test")
             self.assertEqual(new_post[3], self.username)
 
             self.assertTrue(os.path.exists(new_post[1]))
@@ -95,7 +108,7 @@ class TestUploadPost(unittest.TestCase):
     def test_uploading_post_invalid_file_type(self):
         invalid_file = UploadFile(
             filename="document.pdf",
-            file=io.BytesIO(b7\"fake pdf data")
+            file=io.BytesIO(b"fake pdf")
         )
 
         with self.assertRaises(Exception) as context:

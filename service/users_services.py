@@ -1,11 +1,8 @@
 from datetime import timedelta
-from itertools import count
 
 from jose import jwt
 from fastapi import HTTPException
 import time
-
-from pydantic.networks import pretty_email_regex
 
 from db.users import UserRepository
 from consts import *
@@ -85,7 +82,8 @@ class UserService:
         if data.phone.startswith("+7"):
             data.phone = "8" + data.phone.removeprefix("+7")
 
-        print(data.email.count("@"), "@")
+        if not data.phone[1:].isdigit():
+            raise HTTPException(detail="Phone number is not a number", status_code=404)
 
         if not data.email.endswith(email):
             raise HTTPException(detail="Email is not valid", status_code=404)

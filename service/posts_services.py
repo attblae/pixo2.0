@@ -179,7 +179,7 @@ class PostService:
 
         amount_art = PostRepository.count_amount_catalog_posts()
 
-        if file.filename.split(".")[1] not in allowed_files:
+        if file.filename[-5:].split(".")[1] not in allowed_files:
             raise HTTPException(detail="You can not take this file:(", status_code=404)
 
         file.filename = str(amount_art) + ".png"

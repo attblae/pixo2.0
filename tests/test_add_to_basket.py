@@ -12,7 +12,7 @@ class TestAddToBasket(unittest.TestCase):
             "example_name",
             expires_delta=None
             ),
-            link="static/images/1.png"
+            link="static/images/da.png"
         )
 
         with sqlite3.connect(DB_LINK, timeout=5) as con:
@@ -23,7 +23,7 @@ class TestAddToBasket(unittest.TestCase):
                     SELECT username, password FROM users
                     WHERE username = "example_name" AND password = "123456"
                 """
-            )
+            ).fetchone()
 
             if not user_exists:
                 cursor.execute(
@@ -54,12 +54,12 @@ class TestAddToBasket(unittest.TestCase):
                 )
                 con.commit()
 
-                post_exists = cursor.execute(
-                    """
-                        SELECT id FROM posts
-                        WHERE photo_url = "static/images/1.png"
-                    """
-                )
+            post_exists = cursor.execute(
+                """
+                    SELECT id FROM posts
+                    WHERE photo_url = "static/images/da.png"
+                """
+            ).fetchone()
 
             if not post_exists:
                 cursor.execute(
@@ -73,7 +73,7 @@ class TestAddToBasket(unittest.TestCase):
                         VALUES (
                             (SELECT id FROM users WHERE username = "example_name"),
                             "20",
-                            "static/images/0.png",
+                            "static/images/da.png",
                             "something"
                         )
                     """
@@ -86,15 +86,15 @@ class TestAddToBasket(unittest.TestCase):
             post_before = cursor.execute(
                 """
                      SELECT id FROM basket_posts
-                     WHERE art_id = (SELECT id FROM posts WHERE photo_url = "static/images/1.png")
+                     WHERE art_id = (SELECT id FROM posts WHERE photo_url = "static/images/da.png")
                 """
-            )
+            ).fetchone()
             self.assertIsNone(post_before)
             self.assertEqual(PostService.add_to_basket(self.data, username="example_name"), None)
             post_after = cursor.execute(
                 """
                      SELECT id FROM basket_posts
-                     WHERE art_id = (SELECT id FROM posts WHERE photo_url = "static/images/1.png")
+                     WHERE art_id = (SELECT id FROM posts WHERE photo_url = "static/images/da.png")
                 """
             ).fetchone()
             self.assertIsNotNone(post_after)
